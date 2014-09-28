@@ -17,7 +17,10 @@ static unsigned scr_lines;	/* Height of screen in lines */
 
 void vt_fill(char ch, char attr) {
   
-  /* To complete */
+	char *vptr = video_mem;
+	*vptr = ch;
+	vptr++;
+	*vptr = attr;
   
 }
 
