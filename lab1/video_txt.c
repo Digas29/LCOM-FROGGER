@@ -13,20 +13,23 @@
 static char *video_mem;		/* Address to which VRAM is mapped */
 
 static unsigned scr_width;	/* Width of screen in columns */
-static unsigned scr_lines;	/* Height of screen in lines */
+static unsigned scr_lines;/* Height of screen in lines */
 
 void vt_fill(char ch, char attr) {
   
-	char *vptr = video_mem;
-	*vptr = ch;
-	vptr++;
-	*vptr = attr;
-  
+	char *vptr;
+	vptr = video_mem;
+	int i;
+	for(i=0; i < scr_width * scr_lines; i++){
+		*vptr = ch;
+		vptr++;
+		*vptr = attr;
+		vptr++;
+	}
 }
 
 void vt_blank() {
 
-  /* To complete ... */
 
 }
 
