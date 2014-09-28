@@ -30,6 +30,7 @@ void vt_fill(char ch, char attr) {
 
 void vt_blank() {
 
+	vt_fill(0x00, 0x07);
 
 }
 
