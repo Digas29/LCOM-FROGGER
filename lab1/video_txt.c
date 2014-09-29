@@ -38,26 +38,34 @@ int vt_print_char(char ch, char attr, int r, int c) {
   
 	char *vptr;
 	vptr = video_mem;
-	vptr = vptr + r * scr_width * 2 + c * 2;
-	*vptr = ch;
-	vptr++;
-	*vptr = attr;
-	return 0;
+	if(r>=0 && c>=0 && r < scr_lines $$ c < c_width) {
+		vptr = vptr + r * scr_width * 2 + c * 2;
+		*vptr = ch;
+		vptr++;
+		*vptr = attr;
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
 int vt_print_string(char *str, char attr, int r, int c) {
 
 	char *vptr;
 	vptr = video_mem;
-	vptr = vptr + r * scr_width * 2 + c * 2;
-	while(str[0] != 0) {
-		*vptr = *str;
-		vptr++;
-		*vptr = attr;
-		vptr++;
-		*str++;
+	if(r>=0 && c>=0 && r < scr_lines $$ c < c_width) {
+		vptr = vptr + r * scr_width * 2 + c * 2;
+		while(str[0] != 0) {
+			*vptr = *str;
+			vptr++;
+			*vptr = attr;
+			vptr++;
+			*str++;
+		}
+		return 0;
 	}
-	return 0;
+	return 1;
 }
 
 int vt_print_int(int num, char attr, int r, int c) {
