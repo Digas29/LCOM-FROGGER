@@ -70,7 +70,7 @@ int vt_print_string(char *str, char attr, int r, int c) {
 
 int vt_print_int(int num, char attr, int r, int c) {
 
-  /* To complete  diogo... */
+  /* To complete  diogxo... */
 
 
 }
@@ -78,7 +78,7 @@ int vt_print_int(int num, char attr, int r, int c) {
 
 int vt_draw_frame(int width, int height, char attr, int r, int c) {
 
-  /* To complete ... */
+  /* catarina */
 
 }
 
