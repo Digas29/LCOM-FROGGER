@@ -1,6 +1,7 @@
 #include <minix/drivers.h>
 #include <sys/video.h>
 #include <sys/mman.h>
+#include <math.h>
 
 #include <assert.h>
 
@@ -38,7 +39,7 @@ int vt_print_char(char ch, char attr, int r, int c) {
   
 	char *vptr;
 	vptr = video_mem;
-	if(r>=0 && c>=0 && r < scr_lines $$ c < c_width) {
+	if(r>=0 && c>=0 && r < scr_lines && c < scr_width) {
 		vptr = vptr + r * scr_width * 2 + c * 2;
 		*vptr = ch;
 		vptr++;
@@ -54,7 +55,7 @@ int vt_print_string(char *str, char attr, int r, int c) {
 
 	char *vptr;
 	vptr = video_mem;
-	if(r>=0 && c>=0 && r < scr_lines $$ c < c_width) {
+	if(r>=0 && c>=0 && r < scr_lines && c < scr_width) {
 		vptr = vptr + r * scr_width * 2 + c * 2;
 		while(str[0] != 0) {
 			*vptr = *str;
@@ -69,16 +70,37 @@ int vt_print_string(char *str, char attr, int r, int c) {
 }
 
 int vt_print_int(int num, char attr, int r, int c) {
-
-  /* To complete  diogxo... */
-
-
+	if(r>=0 && c>=0 && r < scr_lines && c < scr_width){
+		char *vptr;
+		vptr = video_mem;
+		int numDigitos;
+		numDigitos = 0;
+		int numCopia;
+		numCopia = num;
+		int digito;
+		while(numCopia/10 != 0) {
+			numDigitos++;
+			numCopia = numCopia/10;
+		}
+		while(numDigitos != 0) {
+			digito = num / pow(10,numDigitos);
+			num = num % 10;
+			vptr = vptr + r * scr_width * 2 + c * 2;
+			*vptr = digito;
+			vptr++;
+			*vptr = attr;
+			vptr++;
+			numDigitos--;
+		}
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
 
 int vt_draw_frame(int width, int height, char attr, int r, int c) {
-
-  /* To complete dasda ... */
 
 }
 
