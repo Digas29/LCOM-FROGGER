@@ -70,7 +70,8 @@ int vt_print_string(char *str, char attr, int r, int c) {
 
 int vt_print_int(int num, char attr, int r, int c) {
 
-  /* To complete ... */
+  /* To complete  diogo... */
+
 
 }
 
