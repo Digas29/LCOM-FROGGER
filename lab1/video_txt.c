@@ -72,21 +72,20 @@ int vt_print_string(char *str, char attr, int r, int c) {
 int vt_print_int(int num, char attr, int r, int c) {
 	if(r>=0 && c>=0 && r < scr_lines && c < scr_width){
 		char *vptr;
-		vptr = video_mem;
+		vptr = video_mem + r * scr_width * 2 + c * 2;
 		int numDigitos;
 		numDigitos = 0;
 		int numCopia;
 		numCopia = num;
 		int digito;
-		while(numCopia/10 != 0) {
+		while(numCopia != 0) {
 			numDigitos++;
 			numCopia = numCopia/10;
 		}
 		while(numDigitos != 0) {
-			digito = num / pow(10,numDigitos);
-			num = num % 10;
-			vptr = vptr + r * scr_width * 2 + c * 2;
-			*vptr = digito;
+			digito = num / (int)pow(10,numDigitos-1);
+			num = num % (int)pow(10,numDigitos-1);
+			*vptr = '0' + digito;
 			vptr++;
 			*vptr = attr;
 			vptr++;
