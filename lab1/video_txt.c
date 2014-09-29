@@ -100,6 +100,49 @@ int vt_print_int(int num, char attr, int r, int c) {
 
 
 int vt_draw_frame(int width, int height, char attr, int r, int c) {
+	char *vptr;
+		vptr = video_mem;
+		//vprt é o endereço da minha posiçao de memoria
+				if(r>=0 && c>=0 && r < scr_lines && c < scr_width)
+					//caso o endereço de memoria esteja dentro dos limites do numero de colunas e linhas entao
+				{
+					for(int i = r; i <= (r + height); i++)
+					{
+						for(int j = c; j <= (c + width); j++)
+						{
+						if(i== r && j == c)
+						{
+							vptr = UL_CORNER;
+						}
+						else if(i == r && j == width)
+						{
+							vptr = UR_CORNER;
+						}
+						else if(i == height && j == c)
+						{
+							vptr = LL_CORNER;
+						}
+						else if(i == height && j == width)
+						{
+							vptr = LR_CORNER;
+						}
+						else if((i > r && i < height && j == c) || (i > r && i <height && j == width))
+						{
+							vptr = VERT_BAR;
+						}
+						else if((j > c && j < width && i == r) || (j > c && j < width && i == height))
+						{
+							vptr = HOR_BAR;
+						}
+						else if(j >= (c + 1) && j <= (width - 1))
+						{
+							vptr = " ";
+						}
+						}
+					}
+					return 0;
+				}
+				else return 1;
 
 }
 
