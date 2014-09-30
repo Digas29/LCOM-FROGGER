@@ -100,50 +100,43 @@ int vt_print_int(int num, char attr, int r, int c) {
 
 
 int vt_draw_frame(int width, int height, char attr, int r, int c) {
-	char *vptr;
-		vptr = video_mem;
-		//vprt é o endereço da minha posiçao de memoria
-				if(r>=0 && c>=0 && r < scr_lines && c < scr_width)
-					//caso o endereço de memoria esteja dentro dos limites do numero de colunas e linhas entao
-				{
-					for(int i = r; i <= (r + height); i++)
-					{
-						for(int j = c; j <= (c + width); j++)
-						{
-						if(i== r && j == c)
-						{
-							vptr = UL_CORNER;
-						}
-						else if(i == r && j == width)
-						{
-							vptr = UR_CORNER;
-						}
-						else if(i == height && j == c)
-						{
-							vptr = LL_CORNER;
-						}
-						else if(i == height && j == width)
-						{
-							vptr = LR_CORNER;
-						}
-						else if((i > r && i < height && j == c) || (i > r && i <height && j == width))
-						{
-							vptr = VERT_BAR;
-						}
-						else if((j > c && j < width && i == r) || (j > c && j < width && i == height))
-						{
-							vptr = HOR_BAR;
-						}
-						else if(j >= (c + 1) && j <= (width - 1))
-						{
-							vptr = " ";
-						}
-						}
-					}
-					return 0;
-				}
-				else return 1;
-
+	int row = r;
+	int col = c;
+	int i;
+	int j;
+	int k;
+	int l;
+	if(c+width <= scr_width && r+height <= scr_lines && c >= 0 && r >= 0 && r < scr_lines && c < scr_width && width > 0 && height > 0) {
+		vt_print_char(UL_CORNER, attr, r, c);
+		col++;
+		for(i = 0; i < width - 2; i++) {
+			vt_print_char(HOR_BAR, attr, r, col);
+			col++;
+		}
+		vt_print_char(UR_CORNER, attr, r, col);
+		row++;
+		col = c;
+		for(j = 0; j < height - 2; j++) {
+			vt_print_char(VERT_BAR, attr, row, col);
+			row++;
+		}
+		vt_print_char(LL_CORNER, attr, row, c);
+		col++;
+		for(k = 0; k < width - 2; k++) {
+				vt_print_char(HOR_BAR, attr, row, col);
+				col++;
+		}
+		vt_print_char(LR_CORNER, attr, row, col);
+		row--;
+		for(l = 0; l < height - 2; l++) {
+			vt_print_char(VERT_BAR, attr, row, col);
+			row--;
+		}
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
 /*
