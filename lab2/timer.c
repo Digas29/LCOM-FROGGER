@@ -25,8 +25,10 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 
 	if(timer > 0 && timer < 2){
 		unsigned long read_back = TIMER_RB_CMD | TIMER_RB_SEL(timer);
-		int sys_outb(TIMER_CTRL, read_back);
-		int sys_inb(TIMER_0 + timer, st);
+		sys_outb(TIMER_CTRL, read_back);
+		unsigned long conf;
+		sys_inb(TIMER_0 + timer, &conf);
+		*st = (char)conf;
 		return 0;
 	}
 	else {
@@ -37,8 +39,8 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 int timer_display_conf(unsigned char conf) {
 	printf("Output = %d \n", conf >> 7);
 	printf("Null = %d \n", (conf >> 6) & BIT(0));
-	printf("Counter initialization = %d \n", (conf >> 5) & (BIT(1) | Bit (0)));
-	int mode = (conf >> 3) & (BIT(1) | BIT (0));
+	printf("Counter initialization = %d \n", (conf >> 5) & (BIT(1) | BIT (0)));
+	int mode = (conf >> 3) & (BIT(2) | BIT(1) | BIT (0));
 	if( mode == 0) {
 		printf("Programmed Mode =  Interrupt on terminal count \n");
 	}
@@ -81,7 +83,7 @@ int timer_test_config(unsigned long timer) {
 	 * @return Return 0 upon success and non-zero otherwise
 	 */
 	unsigned char conf;
-	timer_get_config(timer, &conf);
-	timer_display_timer(conf);
+	timer_get_conf(timer, &conf);
+	timer_display_conf(conf);
 	return 0;
 }
