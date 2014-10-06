@@ -1,7 +1,7 @@
 #include <minix/drivers.h>
 
-#include "vt_info.h"
-#include "video_txt.h"
+#include "timer.h"
+#include "i8254.h"
 
 static int proc_args(int argc, char *argv[]);
 static unsigned long parse_ulong(char *str, int base);

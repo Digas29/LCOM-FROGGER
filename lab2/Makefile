@@ -5,7 +5,7 @@ COMPILER_TYPE= gnu
 CC=gcc
 
 PROG=	lab2
-SRCS=	lab2.c i8254.h
+SRCS=	lab2.c timer.c
 
 CCFLAGS= -Wall
 
