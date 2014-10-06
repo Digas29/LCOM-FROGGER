@@ -21,13 +21,43 @@ void timer_int_handler() {
 }
 
 int timer_get_conf(unsigned long timer, unsigned char *st) {
-	
-	return 1;
+
+	if(timer > 0 && timer < 2){
+		unsigned long read_back = TIMER_RB_CMD | TIMER_RB_SEL(timer);
+		int sys_outb(TIMER_CTRL, read_back);
+		int sys_inb(TIMER_0 + timer, st)
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
 int timer_display_conf(unsigned char conf) {
-	
-	return 1;
+	printf("Output = %d \n", conf >> 7);
+	printf("Null = %d \n", (conf >> 6) & BIT(0));
+	printf("Counter initialization = %d \n", (conf >> 5) & (BIT(1) | Bit (0)));
+	int mode = (conf >> 3) & (BIT(1) | Bit (0)))
+	if( mode == 0) {
+		printf("Programmed Mode =  Interrupt on terminal count \n");
+	}
+	else if (mode == 1){
+		printf("Programmed Mode =  Hardware retriggerable one-shot \n");
+	}
+	else if (mode == 2){
+			printf("Programmed Mode =  Rate Generator \n");
+	}
+	else{
+			printf("Programmed Mode =  Square Wave Generator \n");
+	}
+	int BDC = conf & BIT(0) ;
+	if(BDC == 0) {
+		printf("Format =  Binary \n");
+	}
+	else {
+		printf("Format =  BDC \n")
+	}
+	return 0;
 }
 
 int timer_test_square(unsigned long freq) {
@@ -36,11 +66,21 @@ int timer_test_square(unsigned long freq) {
 }
 
 int timer_test_int(unsigned long time) {
-	
+
 	return 1;
 }
 
 int timer_test_config(unsigned long timer) {
-	
-	return 1;
+	/**
+	 * @brief Tests display of timer config
+	 *
+	 * Just calls timer_get_conf() followed by timer_display_conf()
+	 *
+	 * @param timer Timer whose config to read (Ranges from 0 to 2)
+	 * @return Return 0 upon success and non-zero otherwise
+	 */
+	unsigned char conf;
+	timer_get_config(timer, &conf);
+	timer_display_timer(conf);
+	return 0;
 }
