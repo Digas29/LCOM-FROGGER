@@ -47,12 +47,18 @@ int timer_display_conf(unsigned char conf) {
 	else if (mode == 1){
 		printf("Programmed Mode =  Hardware retriggerable one-shot \n");
 	}
-	else if (mode == 2){
+	else if (mode == 2 || mode == 6){
 			printf("Programmed Mode =  Rate Generator \n");
 	}
-	else{
+	else if (mode == 3 || Mode = 7){
 			printf("Programmed Mode =  Square Wave Generator \n");
 	}
+	else if (mode == 4){
+				printf("Programmed Mode =  Software Triggered Strobe \n");
+	}
+	else if (mode == 5){
+					printf("Programmed Mode =  Hardware Triggered Strobe \n");
+		}
 	int BDC = conf & BIT(0) ;
 	if(BDC == 0) {
 		printf("Format =  Binary \n");
