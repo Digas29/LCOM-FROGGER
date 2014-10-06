@@ -1,5 +1,6 @@
 #include <minix/syslib.h>
 #include <minix/drivers.h>
+#include <stdbool.h>
 
 #include "i8254.h"
 int timer_set_square(unsigned long timer, unsigned long freq) {
@@ -24,8 +25,8 @@ void timer_int_handler() {
 int timer_get_conf(unsigned long timer, unsigned char *st) {
 
 	if(timer > 0 && timer < 2){
-		unsigned long read_back = TIMER_RB_CMD | TIMER_RB_SEL(timer);
-		sys_outb(TIMER_CTRL, read_back);
+		unsigned long readBack = TIMER_RB_CMD | TIMER_RB_SEL(timer);
+		sys_outb(TIMER_CTRL, readBack);
 		unsigned long conf;
 		sys_inb(TIMER_0 + timer, &conf);
 		*st = (char)conf;
@@ -59,7 +60,7 @@ int timer_display_conf(unsigned char conf) {
 	else if (mode == 5){
 		printf("Programmed Mode =  Hardware Triggered Strobe \n");
 	}
-	int BDC = conf & BIT(0) ;
+	int BDC = conf & BIT(0);
 	if(BDC == 0) {
 		printf("Format =  Binary \n");
 	}
