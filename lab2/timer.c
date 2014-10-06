@@ -1,6 +1,7 @@
 #include <minix/syslib.h>
 #include <minix/drivers.h>
 
+#include "i8254.h"
 int timer_set_square(unsigned long timer, unsigned long freq) {
 
 	return 1;
@@ -25,7 +26,7 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 	if(timer > 0 && timer < 2){
 		unsigned long read_back = TIMER_RB_CMD | TIMER_RB_SEL(timer);
 		int sys_outb(TIMER_CTRL, read_back);
-		int sys_inb(TIMER_0 + timer, st)
+		int sys_inb(TIMER_0 + timer, st);
 		return 0;
 	}
 	else {
@@ -37,7 +38,7 @@ int timer_display_conf(unsigned char conf) {
 	printf("Output = %d \n", conf >> 7);
 	printf("Null = %d \n", (conf >> 6) & BIT(0));
 	printf("Counter initialization = %d \n", (conf >> 5) & (BIT(1) | Bit (0)));
-	int mode = (conf >> 3) & (BIT(1) | Bit (0)))
+	int mode = (conf >> 3) & (BIT(1) | BIT (0));
 	if( mode == 0) {
 		printf("Programmed Mode =  Interrupt on terminal count \n");
 	}
@@ -55,7 +56,7 @@ int timer_display_conf(unsigned char conf) {
 		printf("Format =  Binary \n");
 	}
 	else {
-		printf("Format =  BDC \n")
+		printf("Format =  BDC \n");
 	}
 	return 0;
 }
