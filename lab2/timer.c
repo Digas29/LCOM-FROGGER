@@ -3,9 +3,32 @@
 #include <stdbool.h>
 
 #include "i8254.h"
-int timer_set_square(unsigned long timer, unsigned long freq) {
 
-	return 1;
+int timer_set_square(unsigned long timer, unsigned long freq) {
+	/**
+	 * @brief Configures a timer to generate a square wave
+	 *
+	 * Does not change the LSB (BCD/binary) of the timer's control word.
+	 *
+	 * @param timer Timer to configure. (Ranges from 0 to 2)
+	 * @param freq Frequency of the square wave to generate
+	 * @return Return 0 upon success and non-zero otherwise
+	 */
+	if(timer <= 2 && freq > 0){
+		unsigned long division = TIMER_FREQ / freq;
+		unsigned char config;
+		char timer_lsb,timer_msb;
+		timer_lsb = (char) division;
+		timer_msb = (char) (division >> 8);
+		timer_get_conf(timer, &config);
+		sys_outb(TIMER_CTRL, config);
+		sys_outb(TIMER_0 + timer, timer_lsb);
+		sys_outb(TIMER_0 + timer, timer_msb);
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
 int timer_subscribe_int(void ) {
@@ -72,7 +95,7 @@ int timer_display_conf(unsigned char conf) {
 
 int timer_test_square(unsigned long freq) {
 	
-	return 1;
+	return timer_set_square(0,freq);
 }
 
 int timer_test_int(unsigned long time) {

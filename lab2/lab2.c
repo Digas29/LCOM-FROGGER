@@ -28,12 +28,13 @@ int main(int argc, char **argv) {
 static void print_usage(char *argv[]) {
   printf("Usage: one of the following:\n"
 	 "\t service run %s -args \"test_config <timer>\" \n",
-	 argv[0]);
+	 "\t service run %s -args \"test_square <freq>\" \n",
+	 argv[0], argv[0]);
 }
 
 static int proc_args(int argc, char *argv[]) {
 
-  unsigned long timer;
+  unsigned long timer, freq;
   char *str;
   long num;
 
@@ -45,9 +46,21 @@ static int proc_args(int argc, char *argv[]) {
 	  }
 	  if( (timer = parse_ulong(argv[2], 10)) == ULONG_MAX )
 		  return 1;
-	  printf("timer:: timer_test_config(0x%X)\n",
+	  printf("timer:: timer_test_config(%lu)\n",
 			  (unsigned)timer);
 	  timer_test_config(timer);
+	  return 0;
+  }
+  else if (strncmp(argv[1], "test_square", strlen("test_square")) == 0) {
+	  if( argc != 3 ) {
+		  printf("square: wrong no of arguments for test of timer_test_square \n");
+		  return 1;
+	  }
+	  if( (timer = parse_ulong(argv[2], 10)) == ULONG_MAX )
+	  		  return 1;
+	  printf("timer:: timer_test_config(%lu)\n",
+	  			  (unsigned)freq);
+	  timer_test_square(freq);
 	  return 0;
   }
   else {
