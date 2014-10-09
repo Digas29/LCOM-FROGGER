@@ -56,7 +56,7 @@ static int proc_args(int argc, char *argv[]) {
 		  printf("square: wrong no of arguments for test of timer_test_square \n");
 		  return 1;
 	  }
-	  if( (timer = parse_ulong(argv[2], 10)) == ULONG_MAX )
+	  if( (freq = parse_ulong(argv[2], 10)) == ULONG_MAX )
 	  		  return 1;
 	  printf("timer:: timer_test_config(%lu)\n",
 	  			  (unsigned)freq);
@@ -82,7 +82,7 @@ static unsigned long parse_ulong(char *str, int base) {
   }
 
   if (endptr == str) {
-	  printf("video_txt: parse_ulong: no digits were found in %s \n", str);
+	  printf("timer: parse_ulong: no digits were found in %s \n", str);
 	  return ULONG_MAX;
   }
 
