@@ -5,15 +5,6 @@
 #include "i8254.h"
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
-	/**
-	 * @brief Configures a timer to generate a square wave
-	 *
-	 * Does not change the LSB (BCD/binary) of the timer's control word.
-	 *
-	 * @param timer Timer to configure. (Ranges from 0 to 2)
-	 * @param freq Frequency of the square wave to generate
-	 * @return Return 0 upon success and non-zero otherwise
-	 */
 	if(timer <= 2 && freq > 0){
 		unsigned long division = TIMER_FREQ / freq;
 		unsigned char config;
