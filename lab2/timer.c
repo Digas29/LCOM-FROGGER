@@ -95,14 +95,6 @@ int timer_test_int(unsigned long time) {
 }
 
 int timer_test_config(unsigned long timer) {
-	/**
-	 * @brief Tests display of timer config
-	 *
-	 * Just calls timer_get_conf() followed by timer_display_conf()
-	 *
-	 * @param timer Timer whose config to read (Ranges from 0 to 2)
-	 * @return Return 0 upon success and non-zero otherwise
-	 */
 	unsigned char conf;
 	timer_get_conf(timer, &conf);
 	timer_display_conf(conf);
