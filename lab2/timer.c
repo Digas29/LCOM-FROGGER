@@ -5,7 +5,7 @@
 #include "i8254.h"
 
 unsigned int counter = 0;
-static int hookID;
+static unsigned int hookID = 0;
 
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
@@ -26,11 +26,11 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 }
 
 int timer_subscribe_int(void ) {
-
+	unsigned int bit = hookID;
 	if(sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &hookID) != OK || sys_irqenable(&hookID) != OK){
 		return -1;
 	}
-	return BIT(hookID);
+	return BIT(bit);
 }
 
 int timer_unsubscribe_int() {
@@ -109,8 +109,7 @@ int timer_test_int(unsigned long time) {
 
 	 if(time > 0) {
 		 while(counter < time * 60) {
-			 /* Get a request message. */
-			 request = driver_receive(ANY, &msg, &ipc_status);
+			 request = driver_receive(ANY, &msg, &ipc_status); /* Get a request message. */
 			 if (request != 0 ) {
 				 printf("driver_receive failed with: %d", request);
 				 continue;
@@ -120,7 +119,7 @@ int timer_test_int(unsigned long time) {
 				 case HARDWARE: /* hardware interrupt notification */
 					 if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 						 timer_int_handler(); /* incrementar o numero de interrupçoes */
-						 printf("Interrupção efectuada com sucesso \n");
+						 printf("Interrupcao efectuada com sucesso \n");
 					 }
 					 break;
 				 default:
