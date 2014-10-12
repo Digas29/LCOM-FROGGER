@@ -34,7 +34,7 @@ static void print_usage(char *argv[]) {
 
 static int proc_args(int argc, char *argv[]) {
 
-  unsigned long timer, freq;
+  unsigned long timer, freq, time;
   char *str;
   long num;
 
@@ -63,6 +63,18 @@ static int proc_args(int argc, char *argv[]) {
 	  timer_test_square(freq);
 	  return 0;
   }
+  else if (strncmp(argv[1], "test_int", strlen("test_int")) == 0) {
+  	  if( argc != 3 ) {
+  		  printf("int: wrong no of arguments for test of timer_test_square \n");
+  		  return 1;
+  	  }
+  	  if( (time = parse_ulong(argv[2], 10)) == ULONG_MAX )
+  	  		  return 1;
+  	  printf("timer:: timer_test_time(%lu)\n",
+  	  			  (unsigned)time);
+  	  timer_test_int(time);
+  	  return 0;
+    }
   else {
 	  printf("timer: non valid function \"%s\" to test\n", argv[1]);
 	  return 1;
