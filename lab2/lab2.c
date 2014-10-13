@@ -27,9 +27,10 @@ int main(int argc, char **argv) {
 
 static void print_usage(char *argv[]) {
   printf("Usage: one of the following:\n"
-	 "\t service run %s -args \"test_config <timer>\" \n",
-	 "\t service run %s -args \"test_square <freq>\" \n",
-	 argv[0], argv[0]);
+	 "\t service run %s -args \"test_config <timer>\" \n"
+	 "\t service run %s -args \"test_square <freq>\" \n"
+	 "\t service run %s -args \"test_int <time>\" \n",
+	 argv[0], argv[0], argv[0]);
 }
 
 static int proc_args(int argc, char *argv[]) {
