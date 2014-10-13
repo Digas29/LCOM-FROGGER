@@ -70,7 +70,7 @@ static int proc_args(int argc, char *argv[]) {
   	  }
   	  if( (time = parse_ulong(argv[2], 10)) == ULONG_MAX )
   	  		  return 1;
-  	  printf("timer:: timer_test_time(%lu)\n",
+  	  printf("timer:: timer_test_int(%lu) \n",
   	  			  (unsigned)time);
   	  timer_test_int(time);
   	  return 0;

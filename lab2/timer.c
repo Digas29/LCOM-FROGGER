@@ -9,11 +9,13 @@ static unsigned int hookID = 0;
 
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
-	if(timer <= 2 && freq > 0){
+	if(timer <= 2 && freq >= 19 && freq <= TIMER_FREQ){
 		unsigned long division = TIMER_FREQ / freq;
 		unsigned char config;
 		char timer_lsb,timer_msb;
-		timer_lsb = (char) division;
+
+
+		timer_lsb = (char) division; // the counter only reads 8 bits at a time;
 		timer_msb = (char) (division >> 8);
 		config = (TIMER_0 + timer) | TIMER_LSB_MSB | TIMER_SQR_WAVE | TIMER_BIN;
 		sys_outb(TIMER_0 + timer, timer_lsb);
@@ -63,15 +65,15 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 int timer_display_conf(unsigned char conf) {
 	printf("Output = %d \n", conf >> 7);
 	printf("Null = %d \n", (conf & BIT(6)) >> 6);
-	int access = (conf >> 5) & (BIT(1) | BIT (0);
+	int access = (conf >> 5) & (BIT(1) | BIT (0));
 	if(access == 1){
-		printf("Type of access = LSB \n", );
+		printf("Type of access = LSB \n");
 	}
 	else if (access == 2){
-		printf("Type of access = MSB \n", );
+		printf("Type of access = MSB \n");
 	}
 	else if (access == 3){
-		printf("Type of access = LSB followed by MSB \n", );
+		printf("Type of access = LSB followed by MSB \n");
 	}
 
 	int mode = (conf >> 3) & (BIT(2) | BIT(1) | BIT (0));
@@ -129,7 +131,9 @@ int timer_test_int(unsigned long time) {
 				 case HARDWARE: /* hardware interrupt notification */
 					 if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 						 timer_int_handler(); /* incrementar o numero de interrupçoes */
-						 printf("Interrupcao efectuada com sucesso \n");
+						 if(counter % 60 == 0) {
+							 printf("\nInterrupcao efectuada com sucesso");
+						 }
 					 }
 					 break;
 				 default:
@@ -140,6 +144,7 @@ int timer_test_int(unsigned long time) {
 				 /* no standard messages expected: do nothing */
 			 }
 		 }
+		 printf("\n");
 		 timer_unsubscribe_int();
 		 return 0;
 	 }
