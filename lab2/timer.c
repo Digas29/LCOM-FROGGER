@@ -9,13 +9,15 @@ static unsigned int hookID = 0;
 
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
-	if(timer <= 2 && freq >= 19 && freq <= TIMER_FREQ){
+	if(timer <= 2 && freq <= TIMER_FREQ){
 		unsigned long division = TIMER_FREQ / freq;
 		unsigned char config;
 		char timer_lsb,timer_msb;
 
-
-		timer_lsb = (char) division; // the counter only reads 8 bits at a time;
+		if(freq < 19) {
+			division = 0;
+		}
+		timer_lsb = (char) division; // the counter only reads 8 bits at a time (LSB followed by MSB)
 		timer_msb = (char) (division >> 8);
 		config = (TIMER_0 + timer) | TIMER_LSB_MSB | TIMER_SQR_WAVE | TIMER_BIN;
 		sys_outb(TIMER_0 + timer, timer_lsb);
