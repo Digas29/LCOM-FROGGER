@@ -66,10 +66,10 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 }
 
 int timer_display_conf(unsigned char conf) {
-	printf("Configuration = %x \n", conf);
+	printf("Configuration = 0x%x \n", conf);
 	printf("Output = %d \n", conf >> 7);
 	printf("Null = %d \n", (conf & BIT(6)) >> 6);
-	int access = (conf >> 5) & (BIT(1) | BIT (0));
+	int access = (conf >> 4) & (BIT(1) | BIT (0));
 	if(access == 1){
 		printf("Type of access = LSB \n");
 	}
@@ -80,7 +80,7 @@ int timer_display_conf(unsigned char conf) {
 		printf("Type of access = LSB followed by MSB \n");
 	}
 
-	int mode = (conf >> 3) & (BIT(2) | BIT(1) | BIT (0));
+	int mode = (conf >> 1) & (BIT(2) | BIT(1) | BIT (0));
 	if( mode == 0) {
 		printf("Programmed Mode =  Interrupt on terminal count \n");
 	}
