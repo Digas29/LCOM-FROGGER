@@ -5,7 +5,7 @@
 #include "i8254.h"
 
 unsigned int counter = 0;
-static unsigned int hookID = 0;
+static unsigned int hookID = 0; // [0,31] escolher o bit de susbcricao
 
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
@@ -133,7 +133,7 @@ int timer_test_int(unsigned long time) {
 				 switch (_ENDPOINT_P(msg.m_source)) {
 				 case HARDWARE: /* hardware interrupt notification */
 					 if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
-						 timer_int_handler(); /* incrementar o numero de interrupçoes */
+						 timer_int_handler(); /* incrementar contador*/
 						 if(counter % 60 == 0) {
 							 printf("\nInterrupcao efectuada com sucesso");
 						 }
