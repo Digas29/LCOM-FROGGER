@@ -26,7 +26,7 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 }
 
 int timer_subscribe_int(void ) {
-	unsigned int bit = hookID;
+	unsigned int bit = hookID; // bit de subscricao
 	if(sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &hookID) != OK || sys_irqenable(&hookID) != OK){
 		return -1;
 	}
@@ -63,7 +63,17 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 int timer_display_conf(unsigned char conf) {
 	printf("Output = %d \n", conf >> 7);
 	printf("Null = %d \n", (conf & BIT(6)) >> 6);
-	printf("Counter initialization = %d \n", (conf >> 5) & (BIT(1) | BIT (0)));
+	int access = (conf >> 5) & (BIT(1) | BIT (0);
+	if(access == 1){
+		printf("Type of access = LSB \n", );
+	}
+	else if (access == 2){
+		printf("Type of access = MSB \n", );
+	}
+	else if (access == 3){
+		printf("Type of access = LSB followed by MSB \n", );
+	}
+
 	int mode = (conf >> 3) & (BIT(2) | BIT(1) | BIT (0));
 	if( mode == 0) {
 		printf("Programmed Mode =  Interrupt on terminal count \n");
