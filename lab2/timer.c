@@ -35,7 +35,7 @@ int timer_subscribe_int(void ) {
 	if(sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &hookID) != OK || sys_irqenable(&hookID) != OK){
 		return -1;
 	}
-	return BIT(bit);
+	return bit;
 }
 
 int timer_unsubscribe_int() {
@@ -52,7 +52,7 @@ void timer_int_handler() {
 
 int timer_get_conf(unsigned long timer, unsigned char *st) {
 
-	if(timer > 0 && timer < 2){
+	if(timer >= 0 && timer <= 2){
 		unsigned long readBack = TIMER_RB_CMD | TIMER_RB_SEL(timer) | TIMER_RB_COUNT_ ;
 		sys_outb(TIMER_CTRL, readBack);
 		unsigned long conf;
@@ -66,6 +66,7 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 }
 
 int timer_display_conf(unsigned char conf) {
+	printf("Configuration = %x \n", conf);
 	printf("Output = %d \n", conf >> 7);
 	printf("Null = %d \n", (conf & BIT(6)) >> 6);
 	int access = (conf >> 5) & (BIT(1) | BIT (0));
@@ -120,7 +121,7 @@ int timer_test_int(unsigned long time) {
 	 int request;
 	 int irq_set;
 
-	 irq_set = timer_subscribe_int();
+	 irq_set = BIT(timer_subscribe_int());
 
 	 if(time > 0) {
 		 while(counter < time * 60) {
@@ -156,7 +157,8 @@ int timer_test_int(unsigned long time) {
 
 int timer_test_config(unsigned long timer) {
 	unsigned char conf;
-	timer_get_conf(timer, &conf);
-	timer_display_conf(conf);
+	if(timer_get_conf(timer, &conf) == 0) {
+		timer_display_conf(conf);
+	}
 	return 0;
 }
