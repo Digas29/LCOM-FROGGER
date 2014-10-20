@@ -4,8 +4,8 @@ COMPILER_TYPE= gnu
 
 CC=gcc
 
-PROG=	lab2
-SRCS=	lab3.c test3.c
+PROG=	lab3
+SRCS=	lab3.c test3.c kbc.c
 
 CCFLAGS= -Wall
 
