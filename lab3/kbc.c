@@ -10,7 +10,7 @@ int kbc_write(unsigned char cmd){
 	while(tries < 3) {
 		sys_inb(STAT_REG, &stat); /* assuming it returns OK */
 		/* loop while 8042 input buffer is not empty */
-		if( (stat & INPT_BUF) == 0 ) {
+		if( (stat & IBF) == 0 ) {
 			sys_outb(KBC_CMD_REG, cmd); /* no args command */
 			return 0;
 		}
@@ -28,7 +28,7 @@ int kbc_read(){
 	while(tries < 3) {
 		sys_inb(STAT_REG, &stat); /* assuming it returns OK */
 		/* loop while 8042 output buffer is empty */
-		if( stat & OUT_BUF ) {
+		if( stat & OBF ) {
 			sys_inb(OUT_BUF, &data); /* assuming it returns OK */
 			if ( (stat &(PAR_ERR | TO_ERR)) == 0 )
 				return data;
