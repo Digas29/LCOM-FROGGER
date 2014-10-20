@@ -51,7 +51,7 @@ int kbd_test_scan(unsigned short ass) {
 	irq_set = subscribe_kbd();
 
 	if (!ass) {
-		while (1) {
+		while (!stop) {
 			printf("TEST\n");
 
 			request = driver_receive(ANY, &msg, &ipc_status);
@@ -65,7 +65,7 @@ int kbd_test_scan(unsigned short ass) {
 				switch (_ENDPOINT_P(msg.m_source)) {
 				case HARDWARE:
 					if (msg.NOTIFY_ARG & irq_set) {
-						printf("\nInterrupcao efectuada com sucesso");
+						stop = kbd_handler();
 					}
 					break;
 				default:
@@ -74,10 +74,7 @@ int kbd_test_scan(unsigned short ass) {
 			} else {
 			}
 		}
-
-		printf("ac\n");
 		unsubscribe_kbd();
-		printf("ad\n");
 		return 0;
 	}
 	return 1;
