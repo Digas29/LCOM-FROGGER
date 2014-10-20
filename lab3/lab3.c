@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 
 static void print_usage(char *argv[]) {
   printf("Usage: one of the following:\n"
-	 "\t service run %s -args \"test_scan <C  or ASM>\" \n"
+	 "\t service run %s -args \"test_scan <flag>\" \n",
 	 argv[0]);
 }
 
@@ -43,11 +43,11 @@ static int proc_args(int argc, char *argv[]) {
 		  printf("kbd: wrong no of arguments for test of timer_test_config \n");
 		  return 1;
 	  }
-	  if( (timer = parse_ulong(argv[2], 10)) == ULONG_MAX )
+	  if( (C = parse_ulong(argv[2], 10)) == ULONG_MAX )
 		  return 1;
 	  printf("kbd:: kbd_test_scan(%lu)\n",
 			  (unsigned)C);
-	  kbd_test_scan(C));
+	  kbd_test_scan(C);
 	  return 0;
   }
   else {
