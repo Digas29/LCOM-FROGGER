@@ -26,11 +26,15 @@ int kbc_read(){
 	int tries = 0;
 
 	while(tries < 3) {
-		sys_inb(STAT_REG, &stat); /* assuming it returns OK */
-		/* loop while 8042 output buffer is empty */
-		if( stat & OBF ) {
-			sys_inb(OUT_BUF, &data); /* assuming it returns OK */
-			if ( (stat &(PAR_ERR | TO_ERR)) == 0 )
+
+		if(sys_inb(STAT_REG, &stat) != OK)
+		{
+			return -1;
+		}
+
+		if(stat & OBF) {
+
+			if ( (stat &(PAR_ERR | TO_ERR)) == 0 && sys_inb(OUT_BUF, &data) == OK)
 				return data;
 			else
 				return -1;

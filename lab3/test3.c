@@ -25,10 +25,14 @@ int unsubscribe_kbd() {
 
 int kbd_handler() {
 	unsigned long code = kbc_read();
+	if (code == -1){
+		return 1;
+	}
 
 	if (code & BIT(7)) {
 		printf("Brakecode: 0x%x\n", code);
-	} else {
+	}
+	else {
 		printf("Makecode: 0x%x\n", code);
 	}
 
@@ -52,15 +56,11 @@ int kbd_test_scan(unsigned short ass) {
 
 	if (!ass) {
 		while (!stop) {
-			printf("TEST\n");
-
 			request = driver_receive(ANY, &msg, &ipc_status);
-
 			if (request != 0) {
 				printf("driver_receive failed with: %d", request);
 				continue;
 			}
-
 			if (is_ipc_notify(ipc_status)) {
 				switch (_ENDPOINT_P(msg.m_source)) {
 				case HARDWARE:
@@ -71,7 +71,8 @@ int kbd_test_scan(unsigned short ass) {
 				default:
 					break;
 				}
-			} else {
+			}
+			else {
 			}
 		}
 		unsubscribe_kbd();
