@@ -1,7 +1,7 @@
 #include <minix/drivers.h>
 
-#include "timer.h"
-#include "i8254.h"
+#include "test3.h"
+#include "macros.h"
 
 static int proc_args(int argc, char *argv[]);
 static unsigned long parse_ulong(char *str, int base);
@@ -27,57 +27,31 @@ int main(int argc, char **argv) {
 
 static void print_usage(char *argv[]) {
   printf("Usage: one of the following:\n"
-	 "\t service run %s -args \"test_config <timer>\" \n"
-	 "\t service run %s -args \"test_square <freq>\" \n"
-	 "\t service run %s -args \"test_int <time>\" \n",
-	 argv[0], argv[0], argv[0]);
+	 "\t service run %s -args \"test_scan <C  or ASM>\" \n"
+	 argv[0]);
 }
 
 static int proc_args(int argc, char *argv[]) {
 
-  unsigned long timer, freq, time;
+  unsigned long C;
   char *str;
   long num;
 
   /* check the function to test: if the first characters match, accept it */
-  if (strncmp(argv[1], "test_config", strlen("test_config")) == 0) {
+  if (strncmp(argv[1], "test_scan", strlen("test_scan")) == 0) {
 	  if( argc != 3 ) {
-		  printf("timer: wrong no of arguments for test of timer_test_config \n");
+		  printf("kbd: wrong no of arguments for test of timer_test_config \n");
 		  return 1;
 	  }
 	  if( (timer = parse_ulong(argv[2], 10)) == ULONG_MAX )
 		  return 1;
-	  printf("timer:: timer_test_config(%lu)\n",
-			  (unsigned)timer);
-	  timer_test_config(timer);
+	  printf("kbd:: kbd_test_scan(%lu)\n",
+			  (unsigned)C);
+	  kbd_test_scan(C));
 	  return 0;
   }
-  else if (strncmp(argv[1], "test_square", strlen("test_square")) == 0) {
-	  if( argc != 3 ) {
-		  printf("square: wrong no of arguments for test of timer_test_square \n");
-		  return 1;
-	  }
-	  if( (freq = parse_ulong(argv[2], 10)) == ULONG_MAX )
-	  		  return 1;
-	  printf("timer:: timer_test_config(%lu)\n",
-	  			  (unsigned)freq);
-	  timer_test_square(freq);
-	  return 0;
-  }
-  else if (strncmp(argv[1], "test_int", strlen("test_int")) == 0) {
-  	  if( argc != 3 ) {
-  		  printf("int: wrong no of arguments for test of timer_test_square \n");
-  		  return 1;
-  	  }
-  	  if( (time = parse_ulong(argv[2], 10)) == ULONG_MAX )
-  	  		  return 1;
-  	  printf("timer:: timer_test_int(%lu) \n",
-  	  			  (unsigned)time);
-  	  timer_test_int(time);
-  	  return 0;
-    }
   else {
-	  printf("timer: non valid function \"%s\" to test\n", argv[1]);
+	  printf("kbd: non valid function \"%s\" to test\n", argv[1]);
 	  return 1;
   }
 }
