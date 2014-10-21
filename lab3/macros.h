@@ -21,5 +21,5 @@
 #define TO_ERR BIT(6)
 #define OBF BIT(0)
 #define IBF BIT(1)
-
+#define SPECIAL_KEY 0xe0
 #endif

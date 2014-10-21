@@ -6,6 +6,7 @@
 #include "kbc.h"
 
 static unsigned int hookID;
+static unsigned int special;
 
 int subscribe_kbd(void) {
 	hookID = IRQ_KBD; // bit de subscricao
@@ -25,21 +26,47 @@ int unsubscribe_kbd() {
 
 int kbd_handler() {
 	unsigned long code = kbc_read();
-	if (code == -1){
-		return 1;
-	}
 
-	if (code & BIT(7)) {
+	switch (code){
+	case -1:
+		return 1;
+		break;
+	case EXIT_BREAK_CODE:
 		printf("Brakecode: 0x%x\n", code);
-	}
-	else {
-		printf("Makecode: 0x%x\n", code);
-	}
-
-	if (code == EXIT_BREAK_CODE) {
 		return 1;
+		break;
+	case SPECIAL_KEY:
+		special = 1;
+		break;
+	default:
+		break;
 	}
 
+	switch (special){
+	case 0:
+		if (code & BIT(7)) {
+			printf("Brakecode: 0x%x\n", code);
+		}
+		else {
+			printf("Makecode: 0x%x\n", code);
+		}
+		break;
+	case 1:
+		special++;
+		break;
+	case 2:
+		if (code & BIT(7)) {
+			printf("Brakecode: 0xe0%x\n", code);
+			special = 0;
+		}
+		else {
+			printf("Makecode: 0xe0%x\n", code);
+			special = 0;
+		}
+		break;
+	default:
+		break;
+	}
 	return 0;
 
 }
