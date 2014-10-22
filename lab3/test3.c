@@ -7,6 +7,7 @@
 
 static unsigned int hookID;
 static unsigned int special;
+static unsigned char ledStatus;
 
 int subscribe_kbd(void) {
 	hookID = IRQ_KBD; // bit de subscricao
@@ -110,16 +111,22 @@ int kbd_test_scan(unsigned short ass) {
 int kbd_test_leds(unsigned short n, unsigned short *leds) {
 
 	unsigned long status;
-	unsigned long newStatus;
 	int i = 0;
 
 	for(i = 0; i < n; i++){
 		printf("%u\n", leds[i]);
 		kbc_write(LEDS);
 		status = kbc_read();
-		kbc_write(BIT(leds[i]));
+
+		kbc_write(ledStatus ^ BIT(leds[i]));
 		status = kbc_read();
-		i++;
+
+		if(!i){
+			ledStatus = BIT(leds[i]);
+		}
+		else{
+			ledStatus ^= BIT(leds[i]);
+		}
 	}
 }
 int kbd_test_timed_scan(unsigned short n) {
