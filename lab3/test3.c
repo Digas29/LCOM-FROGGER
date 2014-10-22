@@ -110,9 +110,10 @@ int kbd_test_scan(unsigned short ass) {
 int kbd_test_leds(unsigned short n, unsigned short *leds) {
 
 	unsigned long status;
+	unsigned long newStatus;
 	int i = 0;
 
-	while(i < n){
+	for(i = 0; i < n; i++){
 		printf("%u\n", leds[i]);
 		kbc_write(LEDS);
 		status = kbc_read();

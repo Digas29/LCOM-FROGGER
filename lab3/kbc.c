@@ -11,7 +11,7 @@ int kbc_write(unsigned char cmd){
 		sys_inb(STAT_REG, &stat); /* assuming it returns OK */
 		/* loop while 8042 input buffer is not empty */
 		if( (stat & IBF) == 0 ) {
-			sys_outb(KBC_CMD_REG, cmd); /* no args command */
+			sys_outb(INPT_BUF, cmd); /* no args command */
 			return 0;
 		}
 		tickdelay(micros_to_ticks(DELAY_US));
