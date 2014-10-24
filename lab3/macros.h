@@ -16,6 +16,7 @@
 #define DELAY_US 20000
 
 #define IRQ_KBD 1
+#define TIMER0_IRQ 0
 
 #define OUT_BUF 0x60
 
