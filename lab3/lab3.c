@@ -35,6 +35,7 @@ static void print_usage(char *argv[]) {
 static int proc_args(int argc, char *argv[]) {
 
 	unsigned long C, n;
+	unsigned short *leds;
 	int i;
 
 	/* check the function to test: if the first characters match, accept it */
@@ -50,18 +51,30 @@ static int proc_args(int argc, char *argv[]) {
 		kbd_test_scan(C);
 		return 0;
 	}
-	if (strncmp(argv[1], "test_leds", strlen("test_leds")) == 0) {
+	else if (strncmp(argv[1], "test_leds", strlen("test_leds")) == 0) {
 		if( argc < 3) {
 			printf("kbd: wrong no of arguments for test of kbd_test_leds \n");
 			return 1;
 		}
-		unsigned short *leds;
 		leds = malloc((argc - 2) * sizeof(unsigned short));
 		for (i = 0; i < argc - 2; i++){
 			leds[i] = parse_ulong(argv[2+i], 10);
 		}
 		kbd_test_leds(argc-2,leds);
 		return 0;
+	}
+	else if (strncmp(argv[1], "test_timed_scan", strlen("test_timed_scan")) == 0) {
+		if( argc != 3) {
+			printf("kbd: wrong no of arguments for test of kbd_test_timed_scan \n");
+			return 1;
+		}
+		if( (n = parse_ulong(argv[2], 10)) == ULONG_MAX )
+			return 1;
+		printf("kbd:: kbd_test_timed_scan(%lu)\n",
+				(unsigned)n);
+		kbd_test_timed_scan(n);
+		return 0;
+
 	}
 	else {
 		printf("kbd: non valid function \"%s\" to test\n", argv[1]);

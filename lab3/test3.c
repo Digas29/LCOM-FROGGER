@@ -5,9 +5,33 @@
 #include "macros.h"
 #include "kbc.h"
 
-static unsigned int hookID;
+static unsigned int hookID; // Keyboard hook ID
 static unsigned int special;
 static unsigned char ledStatus;
+
+unsigned int counter = 0;
+static unsigned int hookIDt = 0; // [0,31] escolher o bit de susbcricao TIMER0
+
+
+int timer_subscribe_int(void ) {
+	unsigned int bit = hookIDt; // bit de subscricao
+	if(sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &hookIDt) != OK || sys_irqenable(&hookIDt) != OK){
+		return -1;
+	}
+	return BIT(bit);
+}
+
+int timer_unsubscribe_int() {
+
+	if(sys_irqrmpolicy(&hookIDt) != OK || sys_irqdisable(&hookIDt) != OK){
+		return 1;
+	}
+	return 0;
+}
+
+void timer_int_handler() {
+	counter++;
+}
 
 int subscribe_kbd(void) {
 	hookID = IRQ_KBD; // bit de subscricao
@@ -113,22 +137,53 @@ int kbd_test_leds(unsigned short n, unsigned short *leds) {
 	unsigned long status;
 	int i = 0;
 
+	ledStatus = 0;
 	for(i = 0; i < n; i++){
-		printf("%u\n", leds[i]);
 		kbc_write(LEDS);
 		status = kbc_read();
-
-		kbc_write(ledStatus ^ BIT(leds[i]));
+		ledStatus ^= BIT(leds[i]);
+		kbc_write(ledStatus);
 		status = kbc_read();
-
-		if(!i){
-			ledStatus = BIT(leds[i]);
-		}
-		else{
-			ledStatus ^= BIT(leds[i]);
-		}
 	}
 }
 int kbd_test_timed_scan(unsigned short n) {
-	/* To be completed */
+	int ipc_status;
+	message msg;
+	int request;
+	int irq_set1;
+	int irq_set2;
+
+	int stop = 0;
+
+	irq_set1 = subscribe_kbd();
+	irq_set2 = timer_subscribe_int();
+
+
+	while (!stop && counter < 60 *n) {
+		request = driver_receive(ANY, &msg, &ipc_status);
+		if (request != 0) {
+			printf("driver_receive failed with: %d", request);
+			continue;
+		}
+		if (is_ipc_notify(ipc_status)) {
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE:
+				if (msg.NOTIFY_ARG & irq_set1) {
+					stop = kbd_handler();
+				}
+				if (msg.NOTIFY_ARG & irq_set2) {
+					timer_int_handler();
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		else {
+		}
+	}
+	unsubscribe_kbd();
+	timer_unsubscribe_int();
+	return 0;
+
 }
