@@ -74,6 +74,7 @@ int kbd_handler() {
 		}
 		else {
 			printf("Makecode: 0x%x\n", code);
+			counter = 0;
 		}
 		break;
 	case 1:
@@ -87,6 +88,7 @@ int kbd_handler() {
 		else {
 			printf("Makecode: 0xe0%x\n", code);
 			special = 0;
+			counter = 0;
 		}
 		break;
 	default:
