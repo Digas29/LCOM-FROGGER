@@ -124,8 +124,7 @@ int kbd_test_scan(unsigned short ass) {
 						stop = kbd_handler();
 					}
 					else{
-						sys_iopenable();
-						kbd_handler_asm();
+						stop = kbd_handler_asm();
 					}
 				}
 				break;
