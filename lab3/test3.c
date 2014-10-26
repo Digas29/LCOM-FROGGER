@@ -9,11 +9,13 @@ static unsigned int hookID; // Keyboard hook ID
 static unsigned int special;
 static unsigned char ledStatus;
 
-unsigned int counter = 0;
-static unsigned int hookIDt = 0; // [0,31] escolher o bit de susbcricao TIMER0
+static unsigned int counter;
+static unsigned int hookIDt; // [0,31] escolher o bit de susbcricao TIMER0
 
+extern int kbd_handler_asm();
 
 int timer_subscribe_int(void ) {
+	hookIDt = 0;
 	unsigned int bit = hookIDt; // bit de subscricao
 	if(sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &hookIDt) != OK || sys_irqenable(&hookIDt) != OK){
 		return -1;
@@ -108,31 +110,34 @@ int kbd_test_scan(unsigned short ass) {
 
 	irq_set = subscribe_kbd();
 
-	if (!ass) {
-		while (!stop) {
-			request = driver_receive(ANY, &msg, &ipc_status);
-			if (request != 0) {
-				printf("driver_receive failed with: %d", request);
-				continue;
-			}
-			if (is_ipc_notify(ipc_status)) {
-				switch (_ENDPOINT_P(msg.m_source)) {
-				case HARDWARE:
-					if (msg.NOTIFY_ARG & irq_set) {
+	while (!stop) {
+		request = driver_receive(ANY, &msg, &ipc_status);
+		if (request != 0) {
+			printf("driver_receive failed with: %d", request);
+			continue;
+		}
+		if (is_ipc_notify(ipc_status)) {
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE:
+				if (msg.NOTIFY_ARG & irq_set) {
+					if(!ass){
 						stop = kbd_handler();
 					}
-					break;
-				default:
-					break;
+					else{
+						sys_iopenable();
+						kbd_handler_asm();
+					}
 				}
-			}
-			else {
+				break;
+			default:
+				break;
 			}
 		}
-		unsubscribe_kbd();
-		return 0;
+		else {
+		}
 	}
-	return 1;
+	unsubscribe_kbd();
+	return 0;
 }
 int kbd_test_leds(unsigned short n, unsigned short *leds) {
 
@@ -146,7 +151,19 @@ int kbd_test_leds(unsigned short n, unsigned short *leds) {
 		ledStatus ^= BIT(leds[i]);
 		kbc_write(ledStatus);
 		status = kbc_read();
+		switch (status) {
+		case RESEND_LEDS:
+			kbc_write(ledStatus);
+			break;
+		case ERROR_LEDS:
+			kbc_write(LEDS);
+			kbc_write(ledStatus);
+			break;
+		default:
+			break;
+		}
 	}
+	return 0;
 }
 int kbd_test_timed_scan(unsigned short n) {
 	int ipc_status;
@@ -156,6 +173,7 @@ int kbd_test_timed_scan(unsigned short n) {
 	int irq_set2;
 
 	int stop = 0;
+	counter = 0;
 
 	irq_set1 = subscribe_kbd();
 	irq_set2 = timer_subscribe_int();

@@ -38,4 +38,8 @@
 
 #define LEDS 0xed //Switch on/off KBD LEDs
 
+#define RESEND_LEDS 0xfe
+
+#define ERROR_LEDS 0xfc
+
 #endif
