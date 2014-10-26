@@ -1,19 +1,15 @@
-.include "test3.h"
-.include "macros.h"
-.include "kbc.h"
-
-XDEF _kbc_read
-XDEF _printf
+.file	"test3.c"
+.lcomm _special,16
 
 .text
 
-LC0:
+Break:
 	.ascii "Brakecode: 0x%x\12\0"
-LC1:
+Make:
 	.ascii "Makecode: 0x%x\12\0"
-LC2:
+specialBreak:
 	.ascii "Brakecode: 0xe0%x\12\0"
-LC3:
+specialMake:
 	.ascii "Makecode: 0xe0%x\12\0"
 
 .globl _kbd_handler_asm
@@ -25,75 +21,73 @@ _kbd_handler_asm:
 	movl	%eax, -12(%ebp)
 	movl	-12(%ebp), %eax
 	cmpl	$224, %eax
-	je	L26
+	je	special
 	cmpl	$-1, %eax
-	je	L27
+	je	unsuccess
 	cmpl	$129, %eax
-	je	L25
-	jmp	L24
-L27:
+	je	exitCode
+	jmp	continue
+unsuccess:
 	movl	$1, %eax
-	jmp	L28
-L25:
+	jmp	fim
+exitCode:
 	movl	-12(%ebp), %eax
 	movl	%eax, 4(%esp)
-	movl	$LC0, (%esp)
+	movl	$Break, (%esp)
 	call	_printf
 	movl	$1, %eax
-	jmp	L28
-L26:
+	jmp	fim
+special:
 	movl	$1, _special
-L24:
+continue:
 	movl	_special, %eax
 	cmpl	$1, %eax
-	je	L31
+	je	specialHandler
 	cmpl	$1, %eax
-	jb	L30
+	jb	print
 	cmpl	$2, %eax
-	je	L32
-	jmp	L29
-L30:
+	je	specialPrint
+	jmp	ret0
+print:
 	movl	-12(%ebp), %eax
 	andl	$128, %eax
 	testl	%eax, %eax
-	je	L33
+	je	makeCode
 	movl	-12(%ebp), %eax
 	movl	%eax, 4(%esp)
-	movl	$LC0, (%esp)
+	movl	$Break, (%esp)
 	call	_printf
-	jmp	L29
-L33:
+	jmp	ret0
+makeCode:
 	movl	-12(%ebp), %eax
 	movl	%eax, 4(%esp)
-	movl	$LC1, (%esp)
+	movl	$Make, (%esp)
 	call	_printf
-	movl	$0, _counter
-	jmp	L29
-L31:
+	jmp	ret0
+specialHandler:
 	movl	_special, %eax
 	addl	$1, %eax
 	movl	%eax, _special
-	jmp	L29
-L32:
+	jmp	ret0
+specialPrint:
 	movl	-12(%ebp), %eax
 	andl	$128, %eax
 	testl	%eax, %eax
-	je	L35
+	je	specialMakeCode
 	movl	-12(%ebp), %eax
 	movl	%eax, 4(%esp)
-	movl	$LC2, (%esp)
+	movl	$specialBreak, (%esp)
 	call	_printf
 	movl	$0, _special
-	jmp	L29
-L35:
+	jmp	ret0
+specialMakeCode:
 	movl	-12(%ebp), %eax
 	movl	%eax, 4(%esp)
-	movl	$LC3, (%esp)
+	movl	$specialMake, (%esp)
 	call	_printf
 	movl	$0, _special
-	movl	$0, _counter
-L29:
+ret0:
 	movl	$0, %eax
-L28:
+fim:
 	leave
 	ret
