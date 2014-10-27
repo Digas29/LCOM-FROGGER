@@ -2,7 +2,6 @@
 #define __TEST3_H
 
 
-unsigned char scanCode;
 void kbd_handler_asm();
 /** @defgroup test3 test3
  * @{

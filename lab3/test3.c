@@ -8,7 +8,7 @@
 static unsigned int hookID; // Keyboard hook ID
 static unsigned int special;
 static unsigned char ledStatus;
-
+unsigned long scanCode;
 
 static unsigned int counter;
 static unsigned int hookIDt; // [0,31] escolher o bit de susbcricao TIMER0
@@ -54,8 +54,12 @@ int unsubscribe_kbd() {
 
 int print_code(){
 	switch (scanCode){
+	case -1:
+		return 1;
+		break;
 	case EXIT_BREAK_CODE:
 		printf("Brakecode: 0x%x\n", scanCode);
+		printf("ESC KEY pressed \n");
 		return 1;
 		break;
 	case SPECIAL_KEY:
