@@ -1,13 +1,8 @@
 #ifndef _MACROS_
 #define _MACROS_
 
-/** @defgroup i8254 i8254
- * @{
- *
- * Constants for programming the i8254 Timer. Needs to be completed.
- */
 
-/**< @brief clock frequency for timer in PC and AT */
+
 
 #define BIT(n) (0x01<<(n))
 
