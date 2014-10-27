@@ -14,6 +14,7 @@ int main(int argc, char **argv) {
 
 	sef_startup();
 
+	sys_enable_iop(SELF);
 
 	if ( argc == 1 ) {
 		print_usage(argv);
@@ -27,9 +28,10 @@ int main(int argc, char **argv) {
 
 static void print_usage(char *argv[]) {
 	printf("Usage: one of the following:\n"
-			"\t service run %s -args \"test_scan <flag>\" \n"
-			"\t service run %s -args \"test_leds <n leds> <array bit leds>\" \n",
-			argv[0],argv[0]);
+			"\t service run %s -args \"test_scan <flag 0-C  1-Assembly>\" \n"
+			"\t service run %s -args \"test_leds  <list of bit (0-2) leds>\" \n"
+			"\t service run %s -args \"test_timed_scan  <time>\" \n",
+			argv[0],argv[0],argv[0]);
 }
 
 static int proc_args(int argc, char *argv[]) {
@@ -46,6 +48,10 @@ static int proc_args(int argc, char *argv[]) {
 		}
 		if( (C = parse_ulong(argv[2], 10)) == ULONG_MAX )
 			return 1;
+		if(C>1 || C < 0){
+			printf("kbd: invalid value for the parametrer\n");
+			return 1;
+		}
 		printf("kbd:: kbd_test_scan(%lu)\n",
 				(unsigned)C);
 		kbd_test_scan(C);
@@ -59,6 +65,10 @@ static int proc_args(int argc, char *argv[]) {
 		leds = malloc((argc - 2) * sizeof(unsigned short));
 		for (i = 0; i < argc - 2; i++){
 			leds[i] = parse_ulong(argv[2+i], 10);
+			if(leds[i]<0 || leds[i]>2){
+				printf("kbd: there is no led with %s bit\n", leds[i]);
+				return 1;
+			}
 		}
 		kbd_test_leds(argc-2,leds);
 		return 0;
@@ -70,6 +80,10 @@ static int proc_args(int argc, char *argv[]) {
 		}
 		if( (n = parse_ulong(argv[2], 10)) == ULONG_MAX )
 			return 1;
+		if(n < 0){
+			printf("kbd: %lu is not a valid number for time\n", n);
+			return 1;
+		}
 		printf("kbd:: kbd_test_timed_scan(%lu)\n",
 				(unsigned)n);
 		kbd_test_timed_scan(n);

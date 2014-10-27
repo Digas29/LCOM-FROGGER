@@ -9,10 +9,11 @@ static unsigned int hookID; // Keyboard hook ID
 static unsigned int special;
 static unsigned char ledStatus;
 
+
 static unsigned int counter;
 static unsigned int hookIDt; // [0,31] escolher o bit de susbcricao TIMER0
 
-extern int kbd_handler_asm();
+
 
 int timer_subscribe_int(void ) {
 	hookIDt = 0;
@@ -51,15 +52,10 @@ int unsubscribe_kbd() {
 	return sys_irqdisable(&hookID) != OK || sys_irqrmpolicy(&hookID) != OK;
 }
 
-int kbd_handler() {
-	unsigned long code = kbc_read();
-
-	switch (code){
-	case -1:
-		return 1;
-		break;
+int print_code(){
+	switch (scanCode){
 	case EXIT_BREAK_CODE:
-		printf("Brakecode: 0x%x\n", code);
+		printf("Brakecode: 0x%x\n", scanCode);
 		return 1;
 		break;
 	case SPECIAL_KEY:
@@ -71,11 +67,11 @@ int kbd_handler() {
 
 	switch (special){
 	case 0:
-		if (code & BIT(7)) {
-			printf("Brakecode: 0x%x\n", code);
+		if (scanCode & BIT(7)) {
+			printf("Brakecode: 0x%x\n", scanCode);
 		}
 		else {
-			printf("Makecode: 0x%x\n", code);
+			printf("Makecode: 0x%x\n", scanCode);
 			counter = 0;
 		}
 		break;
@@ -83,12 +79,12 @@ int kbd_handler() {
 		special++;
 		break;
 	case 2:
-		if (code & BIT(7)) {
-			printf("Brakecode: 0xe0%x\n", code);
+		if (scanCode & BIT(7)) {
+			printf("Brakecode: 0xe0%x\n", scanCode);
 			special = 0;
 		}
 		else {
-			printf("Makecode: 0xe0%x\n", code);
+			printf("Makecode: 0xe0%x\n", scanCode);
 			special = 0;
 			counter = 0;
 		}
@@ -97,6 +93,11 @@ int kbd_handler() {
 		break;
 	}
 	return 0;
+}
+
+int kbd_handler() {
+	scanCode = kbc_read();
+	return print_code();
 
 }
 
@@ -124,7 +125,8 @@ int kbd_test_scan(unsigned short ass) {
 						stop = kbd_handler();
 					}
 					else{
-						stop = kbd_handler_asm();
+						kbd_handler_asm();
+						stop = print_code();
 					}
 				}
 				break;
