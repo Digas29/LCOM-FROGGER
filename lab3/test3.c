@@ -207,6 +207,7 @@ int kbd_test_timed_scan(unsigned short n) {
 		else {
 		}
 	}
+	printf("The time limit was exceded\n");
 	unsubscribe_kbd();
 	timer_unsubscribe_int();
 	return 0;
