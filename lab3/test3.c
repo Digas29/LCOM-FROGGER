@@ -35,7 +35,41 @@ int timer_unsubscribe_int() {
 void timer_int_handler() {
 	counter++;
 }
+int timer_test_int(unsigned long time) {
 
+	int ipc_status;
+	message msg;
+	int request;
+	int irq_set;
+
+	irq_set = timer_subscribe_int();
+
+	if(time > 0) {
+		while(counter < time * 60) {
+			request = driver_receive(ANY, &msg, &ipc_status); /* Get a request message. */
+			if (request != 0 ) {
+				printf("driver_receive failed with: %d", request);
+				continue;
+			}
+			if (is_ipc_notify(ipc_status)) { /* received notification */
+				switch (_ENDPOINT_P(msg.m_source)) {
+				case HARDWARE: /* hardware interrupt notification */
+					if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
+						timer_int_handler(); /* incrementar contador*/
+					}
+					break;
+				default:
+					break; /* no other notifications expected: do nothing */
+				}
+			}
+			else { /* received a standard message, not a notification */
+				/* no standard messages expected: do nothing */
+			}
+		}
+		timer_unsubscribe_int();
+		return 0;
+	}
+}
 int subscribe_kbd(void) {
 	hookID = IRQ_KBD; // bit de subscricao
 	int bitmask = BIT(hookID);
@@ -167,6 +201,7 @@ int kbd_test_leds(unsigned short n, unsigned short *leds) {
 		default:
 			break;
 		}
+		timer_test_int(1);
 	}
 	return 0;
 }
