@@ -6,6 +6,7 @@
 .text
 
 _kbd_handler_asm:
+	xor %eax, %eax
 	inb $OUT_BUF, %al
 	movb %al, _scanCode
 	ret
