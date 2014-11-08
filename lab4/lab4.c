@@ -3,7 +3,6 @@
 
 int main(int argc, char *argv[]) {
 	sef_startup();
-
-	test_packet(2);
+	test_packet(5);
 	return 0;
 }

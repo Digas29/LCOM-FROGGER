@@ -6,6 +6,7 @@
 
 int mouse_read(){
 	unsigned long data;
+	tickdelay(WAIT_TICKS);
 	if (sys_inb(DATA_PORT, &data) == OK)
 		return data;
 	else
@@ -14,15 +15,15 @@ int mouse_read(){
 
 int mouse_write_byte(unsigned char cmd){
 	unsigned long status;
+	int tries=0;
 	do {
 		if (sys_outb(CMD_PORT, WRITE_BYTE_MOUSE) != OK)	return 1;
 		if (sys_outb(DATA_PORT, cmd) != OK)	return 1;
-		tickdelay(WAIT_TICKS);
 		status = mouse_read();
+		tries++;
 	}
-	while(status != ACK);
+	while(tries<3);
 	return 0;
 
 }
-
 
