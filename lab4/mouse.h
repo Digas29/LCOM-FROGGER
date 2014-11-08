@@ -30,17 +30,19 @@
 
 #define ACK 0xfa
 
-#define STREAM_MODE 0xea
+#define STREAM_MODE 0xf4
 
-#define ENABLE_DATA_PACKETS 0xf4
+#define DISABLE_STREAM_MODE 0xf5
 
-#define Y_OVF(n) (((n) & BIT(7)) >> 7)
+#define STATUS_REQUEST 0xe9
 
-#define X_OVF(n) (((n) & BIT(6)) >> 6)
+#define Y_OVF(n) (((n) >> 7) & BIT(0))
 
-#define Y_SIGN(n) (((n) & BIT(5)) >> 5)
+#define X_OVF(n) (((n) >> 6) & BIT(0))
 
-#define X_SIGN(n) (((n) & BIT(4)) >> 4)
+#define Y_SIGN(n) (((n) >> 5) & BIT(0))
+
+#define X_SIGN(n) (((n) >> 4) & BIT(0))
 
 #define MB(n) (((n) & BIT(2)) >> 2)
 
@@ -48,5 +50,9 @@
 
 #define LB(n) ((n) & BIT(0))
 
+#define SCALING(n) ((n) & BIT(4))
 
+#define DATA_REPORTING(n) ((n) & BIT(5))
+
+#define MODE(n) ((n) & BIT(6))
 #endif
