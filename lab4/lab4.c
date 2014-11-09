@@ -3,6 +3,6 @@
 
 int main(int argc, char *argv[]) {
 	sef_startup();
-	test_packet(5);
+	test_gesture(10,2);
 	return 0;
 }
