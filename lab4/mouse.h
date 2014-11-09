@@ -30,9 +30,11 @@
 
 #define ACK 0xfa
 
-#define STREAM_MODE 0xf4
+#define STREAM_MODE 0xea
 
-#define DISABLE_STREAM_MODE 0xf5
+#define DATA_PACKETS 0xf4
+
+#define DISABLE_DATA_PACKETS 0xf5
 
 #define STATUS_REQUEST 0xe9
 
