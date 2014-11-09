@@ -79,6 +79,7 @@ int mouse_handler() {
 			}
 		}
 		counter++;
+		return 0;
 	}
 	else{
 		byte = mouse_read();
@@ -89,7 +90,9 @@ int mouse_handler() {
 			time = 0;
 			packet_print();
 		}
+		return 0;
 	}
+	return 1;
 }
 
 int test_packet(unsigned short cnt){
@@ -101,6 +104,8 @@ int test_packet(unsigned short cnt){
 	unsigned long  irq_set;
 
 	counter = 0;
+	X=0;
+	Y=0;
 
 	irq_set = subscribe_mouse();
 
@@ -164,6 +169,7 @@ int test_async(unsigned short idle_time) {
 	}
 	unsubscribe_mouse();
 	timer_unsubscribe();
+	printf("\nLimit time exceed!\n");
 	return 0;
 }
 
@@ -172,6 +178,7 @@ int test_config(void) {
 	subscribe_mouse();
 	mouse_write_byte(STATUS_REQUEST);
 	byte = mouse_read();
+	if(byte == -1) return 1;
 	printf("BYTE 1: 0x%X\n", byte);
 	printf("Scaling: ");
 	if(!SCALING(byte))
@@ -189,9 +196,11 @@ int test_config(void) {
 	else
 		printf("stream mode\n\n");
 	byte = mouse_read();
+	if(byte == -1) return 1;
 	printf("BYTE 2: 0x%X\n", byte);
 	printf("Resolution: %d\n\n", byte);
 	byte = mouse_read();
+	if(byte == -1) return 1;
 	printf("BYTE 3: 0x%X\n", byte);
 	printf("Sample Rate: %d\n\n", byte);
 }
@@ -229,6 +238,11 @@ int test_gesture(short length, unsigned short tolerance) {
 	}
 	mouse_write_byte(DISABLE_DATA_PACKETS);
 	unsubscribe_mouse();
+	if(abs(y) > tolerance){
+		printf("\nTolerance was exceed!\n");
+	}
+	else
+		printf("\nExit gesture!\n");
 	return 0;
 
 }
