@@ -130,6 +130,8 @@ int test_packet(unsigned short cnt){
 	}
 	mouse_write_byte(DISABLE_DATA_PACKETS);
 	unsubscribe_mouse();
+	printf("%d", cnt);
+	printf(" packets printed");
 	return 0;
 }
 
@@ -238,7 +240,7 @@ int test_gesture(short length, unsigned short tolerance) {
 	}
 	mouse_write_byte(DISABLE_DATA_PACKETS);
 	unsubscribe_mouse();
-	if(abs(y) > tolerance){
+	if(abs(Y) > tolerance){
 		printf("\nTolerance was exceed!\n");
 	}
 	else
