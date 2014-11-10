@@ -258,7 +258,7 @@ int test_gesture(short length, unsigned short tolerance) {
 
 	irq_set = subscribe_mouse();
 
-	while(X < length) {
+	while(abs(X) < abs(length)) {
 		request = driver_receive(ANY, &msg, &ipc_status);
 		if (request != 0 ) {
 			printf("driver_receive failed with: %d", request);

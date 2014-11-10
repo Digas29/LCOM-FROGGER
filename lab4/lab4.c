@@ -85,7 +85,7 @@ static int proc_args(int argc, char *argv[]) {
 			printf("mouse: wrong no of arguments for test of test_config \n");
 			return 1;
 		}
-		if( (x = parse_ulong(argv[2], 10)) == ULONG_MAX )
+		if( (x = parse_long(argv[2], 10)) == ULONG_MAX )
 			return 1;
 		if( (y = parse_ulong(argv[3], 10)) == ULONG_MAX )
 			return 1;
@@ -93,7 +93,7 @@ static int proc_args(int argc, char *argv[]) {
 			printf("mouse: invalid value for the parametrer\n");
 			return 1;
 		}
-		printf("mouse:: test_config(%lu, %d)\n", x,y);
+		printf("mouse:: test_config(%l, %d)\n", x,y);
 		test_gesture(x,y);
 		return 0;
 
