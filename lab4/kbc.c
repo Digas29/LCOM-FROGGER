@@ -23,16 +23,15 @@ int mouse_write_byte(unsigned char cmd){
 	sys_inb(STAT_REG, &stat);
 	if(!(IBF & stat)){
 		do {
-				if (sys_outb(CMD_PORT, WRITE_BYTE_MOUSE) != OK)	return 1;
-				if (sys_outb(DATA_PORT, cmd) != OK)	return 1;
-				tickdelay(WAIT_TICKS);
-				status = mouse_read();
-				if(status == ACK){
-					return 0;
-				}
-				tries++;
+			if (sys_outb(CMD_PORT, WRITE_BYTE_MOUSE) != OK)	return 1;
+			if (sys_outb(DATA_PORT, cmd) != OK)	return 1;
+			status = mouse_read();
+			if(status == ACK){
+				return 0;
 			}
-			while(tries<3);
+			tries++;
+		}
+		while(tries<3);
 	}
 	return 1;
 

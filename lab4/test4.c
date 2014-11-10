@@ -75,17 +75,12 @@ void packet_sum(){
 }
 int gesture_handler(){
 	unsigned long byte;
-	int tries = 0;
 	if(counter == 0){
-		while(tries < 3){
-			byte = mouse_read();
-			if(byte & BIT(3)){
-				packet[0] = byte;
-				break;
-			}
-			tries++;
+		byte = mouse_read();
+		if(byte & BIT(3)){
+			packet[0] = byte;
+			counter++;
 		}
-		counter++;
 		return 0;
 	}
 	else{
@@ -94,7 +89,6 @@ int gesture_handler(){
 		counter++;
 		if(counter == 3){
 			counter = 0;
-			time = 0;
 			packet_sum();
 		}
 		return 0;
@@ -105,17 +99,12 @@ int gesture_handler(){
 
 int mouse_handler() {
 	unsigned long byte;
-	int tries = 0;
 	if(counter == 0){
-		while(tries < 3){
-			byte = mouse_read();
-			if(byte & BIT(3)){
-				packet[0] = byte;
-				break;
-			}
-			tries++;
+		byte = mouse_read();
+		if(byte & BIT(3)){
+			packet[0] = byte;
+			counter++;
 		}
-		counter++;
 		return 0;
 	}
 	else{
@@ -281,8 +270,9 @@ int test_gesture(short length, unsigned short tolerance) {
 				if (msg.NOTIFY_ARG & irq_set) {
 					gesture_handler();
 					if(abs(Y) > tolerance){
-						X=0; Y=0;
-					}
+						X=0;
+						Y=0;
+ 					}
 				}
 				break;
 			default:
