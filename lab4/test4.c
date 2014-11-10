@@ -131,7 +131,7 @@ int test_packet(unsigned short cnt){
 	mouse_write_byte(DISABLE_DATA_PACKETS);
 	unsubscribe_mouse();
 	printf("%d", cnt);
-	printf(" packets printed");
+	printf(" packets printed\n");
 	return 0;
 }
 
@@ -220,7 +220,7 @@ int test_gesture(short length, unsigned short tolerance) {
 
 	irq_set = subscribe_mouse();
 
-	while(X < length && abs(Y) <= tolerance) {
+	while(X < length) {
 		request = driver_receive(ANY, &msg, &ipc_status);
 		if (request != 0 ) {
 			printf("driver_receive failed with: %d", request);
@@ -231,6 +231,9 @@ int test_gesture(short length, unsigned short tolerance) {
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set) {
 					mouse_handler();
+					if(abs(Y) > tolerance){
+						X=0; Y=0;
+					}
 				}
 				break;
 			default:
@@ -240,11 +243,7 @@ int test_gesture(short length, unsigned short tolerance) {
 	}
 	mouse_write_byte(DISABLE_DATA_PACKETS);
 	unsubscribe_mouse();
-	if(abs(Y) > tolerance){
-		printf("\nTolerance was exceed!\n");
-	}
-	else
-		printf("\nExit gesture!\n");
+	printf("\nExit gesture!\n");
 	return 0;
 
 }
