@@ -64,7 +64,7 @@ void packet_sum(){
 	if(LB(packet[0])){
 		X += x;
 		Y += y;
-		printf("X: %d	LB:%d \n",X,LB(packet[0]));
+		printf("X:%d	Y:%d	LB:%d \n",X,Y,LB(packet[0]));
 	}
 	else{
 		X=0;
@@ -189,15 +189,16 @@ int test_async(unsigned short idle_time) {
 int test_config(void) {
 	unsigned long byte;
 	subscribe_mouse();
+	mouse_write_byte(DISABLE_DATA_PACKETS);
 	mouse_write_byte(STATUS_REQUEST);
 	byte = mouse_read();
 	if(byte == -1) return 1;
-	printf("BYTE 1: 0x%X\n", byte);
+	printf("byte 1: 0x%X\n", byte);
 	printf("Scaling: ");
-	if(SCALING(byte))
-		printf("2:1  ");
-	else
+	if(!SCALING(byte))
 		printf("1:1  ");
+	else
+		printf("2:1  ");
 	printf("Data Reporting: ");
 	if(!DATA_REPORTING(byte))
 		printf("disable  ");
@@ -208,9 +209,21 @@ int test_config(void) {
 		printf("remote mode\n\n");
 	else
 		printf("stream mode\n\n");
+	if(LB(byte))
+		printf("LB: pressed ");
+	else
+		printf("LB: not pressed ");
+	if(RB(byte))
+		printf("RB: pressed ");
+	else
+		printf("RB: not pressed ");
+	if(MB(byte))
+		printf("MB: pressed ");
+	else
+		printf("MB: not pressed ");
 	byte = mouse_read();
 	if(byte == -1) return 1;
-	printf("byte 2: 0x%X\n", byte);
+	printf("\n byte 2: 0x%X\n", byte);
 	printf("Resolution: %d\n\n", byte);
 	byte = mouse_read();
 	if(byte == -1) return 1;
