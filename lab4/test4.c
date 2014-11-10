@@ -179,6 +179,7 @@ int test_async(unsigned short idle_time) {
 			}
 		}
 	}
+	mouse_write_byte(DISABLE_DATA_PACKETS);
 	unsubscribe_mouse();
 	timer_unsubscribe();
 	printf("\nLimit time exceed!\n");
