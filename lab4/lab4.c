@@ -93,7 +93,7 @@ static int proc_args(int argc, char *argv[]) {
 			printf("mouse: invalid value for the parametrer\n");
 			return 1;
 		}
-		printf("mouse:: test_config(%lu, %l)\n", x,y);
+		printf("mouse:: test_config(%lu, %d)\n", x,y);
 		test_gesture(x,y);
 		return 0;
 

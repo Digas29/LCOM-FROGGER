@@ -48,27 +48,28 @@ int timer_unsubscribe() {
 	return 0;
 }
 
-void packet_print(int gesture){
+void packet_print(){
 	short x = (X_SIGN(packet[0]) ? (packet[1] | (0xff << 8)) : packet[1]);
 	short y = (Y_SIGN(packet[0]) ? (packet[2] | (0xff << 8)) : packet[2]);
-	if(!gesture){
-		printf("B1=0x%x B2=0x%x B3=0x%x LB=%d MB=%d RB=%d XOV=%d YOV=%d X=%d Y=%d \n",
-				packet[0], packet[1], packet[2],
-				LB(packet[0]), MB(packet[0]), RB(packet[0]),
-				X_OVF(packet[0]), Y_OVF(packet[0]),
-				x, y);
+	printf("B1=0x%x B2=0x%x B3=0x%x LB=%d MB=%d RB=%d XOV=%d YOV=%d X=%d Y=%d \n",
+			packet[0], packet[1], packet[2],
+			LB(packet[0]), MB(packet[0]), RB(packet[0]),
+			X_OVF(packet[0]), Y_OVF(packet[0]),
+			x, y);
+	counter = 0;
+}
+void packet_sum(){
+	short x = (X_SIGN(packet[0]) ? (packet[1] | (0xff << 8)) : packet[1]);
+	short y = (Y_SIGN(packet[0]) ? (packet[2] | (0xff << 8)) : packet[2]);
+	if(LB(packet[0])){
+		X += x;
+		Y += y;
+		printf("X: %d	LB:%d \n",X,LB(packet[0]));
 	}
 	else{
-		if(LB(packet[0])){
-			X += x;
-			Y += y;
-			printf("X: %d \n",X);
-		}
-		else{
-			X=0;
-			Y=0;
-		}
-
+		X=0;
+		Y=0;
+		printf("LB:%d \n",LB(packet[0]));
 	}
 	counter = 0;
 }
@@ -94,7 +95,10 @@ int mouse_handler(int gesture) {
 		if(counter == 3){
 			counter = 0;
 			time = 0;
-			packet_print(gesture);
+			if(!gesture)
+				packet_print();
+			else
+				packet_sum();
 		}
 		return 0;
 	}
@@ -103,7 +107,7 @@ int mouse_handler(int gesture) {
 
 int test_packet(unsigned short cnt){
 
-	int i = 0;
+	int j = 0;
 	int ipc_status;
 	message msg;
 	int request;
@@ -115,7 +119,7 @@ int test_packet(unsigned short cnt){
 
 	irq_set = subscribe_mouse();
 
-	while(i < 3 * cnt) {
+	while(j < 3 * cnt) {
 		request = driver_receive(ANY, &msg, &ipc_status);
 		if (request != 0 ) {
 			printf("driver_receive failed with: %d", request);
@@ -126,7 +130,7 @@ int test_packet(unsigned short cnt){
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set) {
 					mouse_handler(0);
-					i++;
+					j++;
 				}
 				break;
 			default:
@@ -189,10 +193,10 @@ int test_config(void) {
 	if(byte == -1) return 1;
 	printf("BYTE 1: 0x%X\n", byte);
 	printf("Scaling: ");
-	if(!SCALING(byte))
-		printf("1:1  ");
-	else
+	if(SCALING(byte))
 		printf("2:1  ");
+	else
+		printf("1:1  ");
 	printf("Data Reporting: ");
 	if(!DATA_REPORTING(byte))
 		printf("disable  ");
@@ -205,11 +209,11 @@ int test_config(void) {
 		printf("stream mode\n\n");
 	byte = mouse_read();
 	if(byte == -1) return 1;
-	printf("BYTE 2: 0x%X\n", byte);
+	printf("byte 2: 0x%X\n", byte);
 	printf("Resolution: %d\n\n", byte);
 	byte = mouse_read();
 	if(byte == -1) return 1;
-	printf("BYTE 3: 0x%X\n", byte);
+	printf("byte 3: 0x%X\n", byte);
 	printf("Sample Rate: %d\n\n", byte);
 }
 
