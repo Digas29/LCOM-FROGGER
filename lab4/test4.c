@@ -11,6 +11,7 @@ unsigned long packet[3];
 unsigned int counter;
 unsigned int time;
 int X,Y;
+int LENGTH, TOLERANCE;
 
 int subscribe_mouse(void) {
 	hookID = 12;
@@ -90,6 +91,16 @@ int gesture_handler(){
 		if(counter == 3){
 			counter = 0;
 			packet_sum();
+			if(LENGTH >0){
+				if(X > LENGTH){
+					return 1;
+				}
+			}
+			else{
+				if(X< LENGTH){
+					return 1;
+				}
+			}
 		}
 		return 0;
 	}
@@ -251,14 +262,17 @@ int test_gesture(short length, unsigned short tolerance) {
 	message msg;
 	int request;
 	unsigned long  irq_set;
+	int stop=0;
 
 	counter = 0;
 	X = 0;
 	Y = 0;
+	LENGTH = length;
+	TOLERANCE = tolerance;
 
 	irq_set = subscribe_mouse();
 
-	while(abs(X) < abs(length)) {
+	while(!stop) {
 		request = driver_receive(ANY, &msg, &ipc_status);
 		if (request != 0 ) {
 			printf("driver_receive failed with: %d", request);
@@ -268,7 +282,7 @@ int test_gesture(short length, unsigned short tolerance) {
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set) {
-					gesture_handler();
+					stop=gesture_handler();
 					if(abs(Y) > tolerance){
 						X=0;
 						Y=0;
