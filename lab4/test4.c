@@ -28,7 +28,6 @@ int subscribe_mouse(void) {
 }
 
 int unsubscribe_mouse() {
-	mouse_write_byte(DISABLE_DATA_PACKETS);
 	return sys_irqdisable(&hookID) != OK || sys_irqrmpolicy(&hookID) != OK;
 }
 int timer_subscribe(void) {
@@ -59,6 +58,7 @@ void packet_print(){
 	counter = 0;
 }
 void packet_sum(){
+
 	short x = (X_SIGN(packet[0]) ? (packet[1] | (0xff << 8)) : packet[1]);
 	short y = (Y_SIGN(packet[0]) ? (packet[2] | (0xff << 8)) : packet[2]);
 	if(LB(packet[0])){
@@ -84,6 +84,7 @@ int mouse_handler(int gesture) {
 				packet[0] = byte;
 				break;
 			}
+			tries++;
 		}
 		counter++;
 		return 0;
@@ -114,8 +115,6 @@ int test_packet(unsigned short cnt){
 	unsigned long  irq_set;
 
 	counter = 0;
-	X=0;
-	Y=0;
 
 	irq_set = subscribe_mouse();
 
@@ -155,8 +154,8 @@ int test_async(unsigned short idle_time) {
 	time = 0;
 	counter = 0;
 
-	irq_set1 = subscribe_mouse();
 	irq_set2 = timer_subscribe();
+	irq_set1 = subscribe_mouse();
 
 	while(time < idle_time * 60) {
 		request = driver_receive(ANY, &msg, &ipc_status);
@@ -170,7 +169,7 @@ int test_async(unsigned short idle_time) {
 				if (msg.NOTIFY_ARG & irq_set1) {
 					mouse_handler(0);
 				}
-				if(msg.NOTIFY_ARG & irq_set2){
+				else if(msg.NOTIFY_ARG & irq_set2){
 					time++;
 				}
 				break;

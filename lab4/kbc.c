@@ -7,7 +7,6 @@
 int mouse_read(){
 	unsigned long data,stat;
 	sys_inb(STAT_REG, &stat);
-	tickdelay(WAIT_TICKS);
 	if((stat & OBF != 0) && (stat & AUX != 0)){
 		if (sys_inb(DATA_PORT, &data) == OK)
 			return data;
