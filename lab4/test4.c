@@ -73,8 +73,7 @@ void packet_sum(){
 	}
 	counter = 0;
 }
-
-int mouse_handler(int gesture) {
+int gesture_handler(){
 	unsigned long byte;
 	int tries = 0;
 	if(counter == 0){
@@ -96,10 +95,37 @@ int mouse_handler(int gesture) {
 		if(counter == 3){
 			counter = 0;
 			time = 0;
-			if(!gesture)
-				packet_print();
-			else
-				packet_sum();
+			packet_sum();
+		}
+		return 0;
+	}
+	return 1;
+
+}
+
+int mouse_handler() {
+	unsigned long byte;
+	int tries = 0;
+	if(counter == 0){
+		while(tries < 3){
+			byte = mouse_read();
+			if(byte & BIT(3)){
+				packet[0] = byte;
+				break;
+			}
+			tries++;
+		}
+		counter++;
+		return 0;
+	}
+	else{
+		byte = mouse_read();
+		packet[counter] = byte;
+		counter++;
+		if(counter == 3){
+			counter = 0;
+			time = 0;
+			packet_print();
 		}
 		return 0;
 	}
@@ -128,7 +154,7 @@ int test_packet(unsigned short cnt){
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set) {
-					mouse_handler(0);
+					mouse_handler();
 					j++;
 				}
 				break;
@@ -167,7 +193,7 @@ int test_async(unsigned short idle_time) {
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set1) {
-					mouse_handler(0);
+					mouse_handler();
 				}
 				else if(msg.NOTIFY_ARG & irq_set2){
 					time++;
@@ -253,7 +279,7 @@ int test_gesture(short length, unsigned short tolerance) {
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set) {
-					mouse_handler(1);
+					gesture_handler();
 					if(abs(Y) > tolerance){
 						X=0; Y=0;
 					}
