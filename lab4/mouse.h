@@ -57,4 +57,10 @@
 #define DATA_REPORTING(n) ((n) & BIT(5))
 
 #define MODE(n) ((n) & BIT(6))
+
+#define OBF BIT(0)
+
+#define AUX BIT(5)
+
+#define IBF BIT(1)
 #endif
