@@ -48,26 +48,32 @@ int timer_unsubscribe() {
 	return 0;
 }
 
-void packet_print(){
+void packet_print(int gesture){
 	short x = (X_SIGN(packet[0]) ? (packet[1] | (0xff << 8)) : packet[1]);
 	short y = (Y_SIGN(packet[0]) ? (packet[2] | (0xff << 8)) : packet[2]);
-	printf("B1=0x%x B2=0x%x B3=0x%x LB=%d MB=%d RB=%d XOV=%d YOV=%d X=%d Y=%d \n",
-			packet[0], packet[1], packet[2],
-			LB(packet[0]), MB(packet[0]), RB(packet[0]),
-			X_OVF(packet[0]), Y_OVF(packet[0]),
-			x, y);
-	if(LB(packet[0])){
-		X += x;
-		Y += y;
+	if(!gesture){
+		printf("B1=0x%x B2=0x%x B3=0x%x LB=%d MB=%d RB=%d XOV=%d YOV=%d X=%d Y=%d \n",
+				packet[0], packet[1], packet[2],
+				LB(packet[0]), MB(packet[0]), RB(packet[0]),
+				X_OVF(packet[0]), Y_OVF(packet[0]),
+				x, y);
 	}
 	else{
-		X=0;
-		Y=0;
+		if(LB(packet[0])){
+			X += x;
+			Y += y;
+			printf("X: %d \n",X);
+		}
+		else{
+			X=0;
+			Y=0;
+		}
+
 	}
 	counter = 0;
 }
 
-int mouse_handler() {
+int mouse_handler(int gesture) {
 	unsigned long byte;
 	int tries = 0;
 	if(counter == 0){
@@ -88,7 +94,7 @@ int mouse_handler() {
 		if(counter == 3){
 			counter = 0;
 			time = 0;
-			packet_print();
+			packet_print(gesture);
 		}
 		return 0;
 	}
@@ -119,7 +125,7 @@ int test_packet(unsigned short cnt){
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set) {
-					mouse_handler();
+					mouse_handler(0);
 					i++;
 				}
 				break;
@@ -158,7 +164,7 @@ int test_async(unsigned short idle_time) {
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set1) {
-					mouse_handler();
+					mouse_handler(0);
 				}
 				if(msg.NOTIFY_ARG & irq_set2){
 					time++;
@@ -230,7 +236,7 @@ int test_gesture(short length, unsigned short tolerance) {
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set) {
-					mouse_handler();
+					mouse_handler(1);
 					if(abs(Y) > tolerance){
 						X=0; Y=0;
 					}
