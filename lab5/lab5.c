@@ -6,5 +6,7 @@ int main()
 
 	sef_startup();
 
+	test_init(0x105, 5);
+
 	return 0;
 }

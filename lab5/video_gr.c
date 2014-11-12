@@ -39,7 +39,7 @@ void *vg_init(unsigned short mode)
 		return;
 	}
 
-	int err;
+	int erro;
 	struct mem_range mr;
 
 	/* Allow memory mapping */
@@ -49,8 +49,8 @@ void *vg_init(unsigned short mode)
 	mr.mr_base = (phys_bytes)(VRAM_PHYS_ADDR);
 	mr.mr_limit = mr.mr_base + vram_size;
 
-	if( OK != (err = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
-		panic("video_txt: sys_privctl (ADD_MEM) failed: %d\n", err);
+	if( OK != (erro = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
+		panic("video_txt: sys_privctl (ADD_MEM) failed: %d\n", erro);
 
 	/* Map memory */
 
