@@ -1,6 +1,7 @@
 void *test_init(unsigned short mode, unsigned short delay) {
-	
-	/* To be completed */
+	vg_init(mode);
+	sleep(delay);
+	vg_exit();
 	
 }
 
