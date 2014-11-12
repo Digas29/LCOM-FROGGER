@@ -28,6 +28,40 @@ static unsigned h_res;		/* Horizontal screen resolution in pixels */
 static unsigned v_res;		/* Vertical screen resolution in pixels */
 static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
 
+void *vg_init(unsigned short mode)
+{
+	struct reg86u r;
+	r.u.w.ax = 0x4F02; // VBE call, function 02 -- set VBE mode
+	r.u.w.bx = 1<<14|0x105; // set bit 14: linear framebuffer, modo0x105
+	r.u.b.intno = 0x10;
+	if( sys_int86(&r) != OK ) {
+		printf("set_vbe_mode: sys_int86() failed \n");
+		return;
+	}
+
+	int err;
+	struct mem_range mr;
+
+	/* Allow memory mapping */
+
+	unsigned int vram_size = H_RES*V_RES;
+
+	mr.mr_base = (phys_bytes)(VRAM_PHYS_ADDR);
+	mr.mr_limit = mr.mr_base + vram_size;
+
+	if( OK != (err = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
+		panic("video_txt: sys_privctl (ADD_MEM) failed: %d\n", err);
+
+	/* Map memory */
+
+	video_mem = vm_map_phys(SELF, (void *)mr.mr_base, vram_size);
+
+	if(video_mem == MAP_FAILED)
+		panic("video_txt couldn't map video memory");
+
+	return video_mem;
+}
+
 int vg_exit() {
   struct reg86u reg86;
 
