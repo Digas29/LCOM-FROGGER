@@ -6,8 +6,7 @@ int main()
 
 	sef_startup();
 
-	//test_init(0x105, 5);
-	test_square(0,0,500,50);
+	test_square(10, 10, 10, 10);
 
 	return 0;
 }

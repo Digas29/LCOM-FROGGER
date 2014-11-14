@@ -12,6 +12,50 @@
 
 int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 
+
+	mmap_t map_info;
+
+	if(lm_init() != OK) return 1;
+
+	if (lm_alloc(sizeof(vbe_mode_info_t), &map_info) == NULL) {
+		printf("Allocation of memory error\n");
+		return 1;
+	}
+
+	struct reg86u r;
+
+	r.u.w.ax = 0x4F01;
+	r.u.w.es = PB2BASE(map_info.phys);
+	r.u.w.di = PB2OFF(map_info.phys);
+	r.u.w.cx = mode;
+	r.u.b.intno = 0x10;
+
+	if( sys_int86(&r) != OK ) {
+		printf("set_vbe_mode: sys_int86() failed \n");
+		return 1;
+	}
+	switch(r.u.b.ah){
+	case 0x01:
+		printf("Function call failed \n");
+		return 1;
+		break;
+	case 0x02:
+		printf("Function is not supported in current HW configuration \n");
+		return 1;
+		break;
+	case 0x03:
+		printf("Function is invalid in current video mode \n");
+		return 1;
+		break;
+	default:
+		break;
+	}
+	memcpy(vmi_p,map_info.virtual, sizeof(vbe_mode_info_t));
+	lm_free(&map_info);
+	return 0;
+
+
+
 }
 
 
