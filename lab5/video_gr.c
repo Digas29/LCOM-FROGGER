@@ -62,6 +62,28 @@ void *vg_init(unsigned short mode)
 	return video_mem;
 }
 
+int vg_draw_pixel(unsigned short x, unsigned short y, unsigned long color){
+	if(x<H_RES && y<V_RES){
+		char *vptr;
+		vptr=video_mem;
+		vptr += y*H_RES + x;
+		*vptr = color;
+		return 0;
+	}
+	return 1;
+}
+
+int vg_draw_rectangle(unsigned short x, unsigned short y, unsigned short width, unsigned short heigth, unsigned long color){
+	unsigned int i,j;
+	for(i=0;i<width;i++){
+		for(j=0;j<width;j++){
+			vg_draw_pixel(i+x,j+y,color);
+		}
+	}
+	if ((x + width)<h_res && (y + heigth)<v_res) return 0;
+	return 1;
+}
+
 int vg_exit() {
   struct reg86u reg86;
 
