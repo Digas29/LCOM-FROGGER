@@ -39,6 +39,7 @@ int test_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 				if (msg.NOTIFY_ARG & irq_set) {
 					kbd_handler();
 				}
+				vg_draw_rectangle(0,0,100,100,50);
 				break;
 			default:
 				break;
