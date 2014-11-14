@@ -31,33 +31,60 @@ static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
 void *vg_init(unsigned short mode)
 {
 	struct reg86u r;
-	r.u.w.ax = 0x4F02; // VBE call, function 02 -- set VBE mode
-	r.u.w.bx = 1<<14|0x105; // set bit 14: linear framebuffer, modo0x105
-	r.u.b.intno = 0x10;
-	if( sys_int86(&r) != OK ) {
-		printf("set_vbe_mode: sys_int86() failed \n");
-		return;
+	vbe_mode_info_t info;
+
+	if (vbe_get_mode_info(mode, &info) != 0)
+	{
+		return NULL;
 	}
+	h_res=info.XResolution;
+	v_res=info.YResolution;
+	bits_per_pixel=info.BitsPerPixel;
 
 	int erro;
 	struct mem_range mr;
 
 	/* Allow memory mapping */
 
-	unsigned int vram_size = H_RES*V_RES;
+	unsigned int vram_size = h_res * v_res * (bits_per_pixel/8);
 
 	mr.mr_base = (phys_bytes)(VRAM_PHYS_ADDR);
 	mr.mr_limit = mr.mr_base + vram_size;
 
 	if( OK != (erro = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
-		panic("video_txt: sys_privctl (ADD_MEM) failed: %d\n", erro);
+		panic("video_gr: sys_privctl (ADD_MEM) failed: %d\n", erro);
 
 	/* Map memory */
 
 	video_mem = vm_map_phys(SELF, (void *)mr.mr_base, vram_size);
 
 	if(video_mem == MAP_FAILED)
-		panic("video_txt couldn't map video memory");
+		panic("video_gr couldn't map video memory");
+
+	r.u.w.ax = 0x4F02; // VBE call, function 02 -- set VBE mode
+	r.u.w.bx = 1<<14|mode; // set bit 14: linear framebuffer
+	r.u.b.intno = 0x10;
+	if( sys_int86(&r) != OK ) {
+		printf("set_vbe_mode: sys_int86() failed \n");
+		return NULL;
+	}
+	switch(r.u.b.ah){
+	case 0x01:
+		printf("Function call failed \n");
+		return NULL;
+		break;
+	case 0x02:
+		printf("Function is not supported in current HW configuration \n");
+		return NULL;
+		break;
+	case 0x03:
+		printf("Function is invalid in current video mode \n");
+		return NULL;
+		break;
+	default:
+		break;
+	}
+
 
 	return video_mem;
 }
