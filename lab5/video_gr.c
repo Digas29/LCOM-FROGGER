@@ -92,8 +92,8 @@ void *vg_init(unsigned short mode)
 int vg_draw_pixel(unsigned short x, unsigned short y, unsigned long color){
 	if(x<H_RES && y<V_RES){
 		char *vptr;
-		vptr=video_mem;
-		vptr += y*H_RES + x;
+		vptr = video_mem;
+		vptr += y*h_res + x;
 		*vptr = color;
 		return 0;
 	}
