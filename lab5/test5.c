@@ -8,7 +8,10 @@ void *test_init(unsigned short mode, unsigned short delay) {
 
 int test_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color) {
 	
-	/* To be completed */
+	vg_init(0x105);
+	vg_draw_rectangle(x,y, size, size,color);
+	sleep(5);
+	vg_exit();
 	
 }
 
