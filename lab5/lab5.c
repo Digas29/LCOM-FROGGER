@@ -1,4 +1,5 @@
 #include <minix/drivers.h>
+#include "pixmap.h"
 
 int main()
 {
@@ -6,7 +7,7 @@ int main()
 
 	sef_startup();
 
-	test_square(10, 10, 10, 10);
+	test_move(100, 400, penguin, 0, 200, 10);
 
 	return 0;
 }

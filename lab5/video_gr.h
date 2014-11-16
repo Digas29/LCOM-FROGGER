@@ -22,7 +22,7 @@ void *vg_init(unsigned short mode);
 
  /**
  * @brief Returns to default Minix 3 text mode (0x03: 25 x 80, 16 colors)
- * 
+ *
  * @return 0 upon success, non-zero upon failure
  */
 int vg_exit(void);
