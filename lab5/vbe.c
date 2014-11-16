@@ -52,10 +52,8 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 	}
 	memcpy(vmi_p,map_info.virtual, sizeof(vbe_mode_info_t));
 	lm_free(&map_info);
+
 	return 0;
-
-
-
 }
 
 
