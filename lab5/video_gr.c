@@ -91,7 +91,6 @@ void *vg_init(unsigned short mode)
 		break;
 	}
 
-
 	return video_mem;
 }
 
@@ -120,6 +119,7 @@ int vg_draw_line(unsigned short xi,unsigned short xf, unsigned short yi,unsigned
 	/*
 	 * Bresenham's line algorithm
 	 * NOTE: this algorithm is not made by us! It's copied from wikipedia!!!
+	 * http://rosettacode.org/wiki/Bitmap/Bresenham's_line_algorithm#C
 	 */
 	int dx = abs(xf-xi), sx = xi<xf ? 1 : -1;
 	int dy = abs(yf-yi), sy = yi<yf ? 1 : -1;
