@@ -29,6 +29,7 @@
 /* Private global variables */
 
 static char *video_mem;		/* Process address to which VRAM is mapped */
+static char *second_buff; /* Second buffer */
 
 static unsigned h_res;		/* Horizontal screen resolution in pixels */
 static unsigned v_res;		/* Vertical screen resolution in pixels */
@@ -54,7 +55,7 @@ void *vg_init(unsigned short mode)
 
 	unsigned int vram_size = h_res * v_res * (bits_per_pixel/8);
 
-	mr.mr_base = (phys_bytes)(VRAM_PHYS_ADDR);
+	mr.mr_base = (phys_bytes)(info.PhysBasePtr);
 	mr.mr_limit = mr.mr_base + vram_size;
 
 	if( OK != (erro = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
@@ -90,12 +91,13 @@ void *vg_init(unsigned short mode)
 	default:
 		break;
 	}
+	second_buff = malloc((bits_per_pixel / 8) * h_res * v_res);
 
 	return video_mem;
 }
 
 int vg_draw_pixel(unsigned short x, unsigned short y, unsigned long color){
-	if(x < h_res && y < v_res){
+	if(x < h_res && y < v_res && color){
 		char *vptr;
 		vptr = video_mem;
 		vptr += (y * h_res + x);
@@ -235,4 +237,65 @@ int vg_exit() {
       return 1;
   } else
       return 0;
+}
+void vg_color_buffer(unsigned long color){
+	int i;
+	int j = 0;
+	char *ptr;
+	ptr = second_buff;
+	unsigned long color2;
+	unsigned int size = h_res*v_res;
+	for(i=0; i < size; i++){
+		color2 = color;
+		while(j < bits_per_pixel/8){
+			unsigned long tmp = color2 & 0xFF;
+			*ptr = tmp;
+			color2 >>= 8;
+			ptr++;
+		}
+	}
+}
+void flip(){
+	char *ptr_vid;
+	ptr_vid = video_mem;
+	char *ptr_buff;
+	ptr_buff = second_buff;
+	int i = 0;
+	unsigned int size = (bits_per_pixel / 8) * h_res * v_res;
+	while (i < size)
+	{
+		*ptr_vid = *ptr_buff;
+		ptr_vid++;
+		ptr_buff++;
+		i++;
+	}
+}
+void vg_animate_xpm(short xi,short yi, char *map[],int *velocidade){
+	int wd;
+	int ht;
+	char *pic;
+	pic = read_xpm(map,&wd,&ht);
+	unsigned int i,j;
+	if(xi < 0){
+		xi = 0;
+		*velocidade = -(*velocidade);
+	}
+	else if(xi + wd > h_res){
+		xi = h_res - wd;
+		*velocidade = -(*velocidade);
+	}
+	else if(yi < 0){
+		yi=0;
+		*velocidade = -(*velocidade);
+	}
+	else if(abs(yi + ht) > v_res){
+		yi = v_res - ht;
+		*velocidade = -(*velocidade);
+	}
+	for(i = 0; i < ht; i++) {
+		for(j = 0; j < wd; j++){
+			vg_draw_pixel(xi+j,yi+i,*pic);
+			pic++;
+		}
+	}
 }

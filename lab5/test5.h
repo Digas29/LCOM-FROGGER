@@ -1,7 +1,7 @@
 #ifndef __TEST5_H
 #define __TEST5_H
 
-
+#define black 0
 /** @defgroup video_gr video_gr
  * @{
  *

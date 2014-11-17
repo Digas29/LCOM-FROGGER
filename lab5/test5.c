@@ -1,13 +1,16 @@
 #include "keyboard.h"
 #include "timer.h"
+#include "video_gr.h"
+#include "test5.h"
 #include <minix/sysutil.h>
 #include <minix/syslib.h>
 #include <minix/drivers.h>
 
+#define FPS 20
+#define round(x) (x<0?ceil((x)-0.5):floor((x)+0.5))
 
 unsigned long scanCode;
 unsigned int counter;
-
 
 void kbd_handler() {
 	scanCode = kbc_read();
@@ -18,7 +21,8 @@ void timer_handler(){
 }
 
 void *test_init(unsigned short mode, unsigned short delay) {
-	char adress = vg_init(mode);
+	char *adress;
+	adress = vg_init(mode);
 
 	int ipc_status;
 	message msg;
@@ -50,7 +54,7 @@ void *test_init(unsigned short mode, unsigned short delay) {
 	}
 	unsubscribe_timer();
 	vg_exit();
-	printf("0x%X \n",adress);
+	printf("0x%x \n",adress);
 	return 0;
 	
 }
@@ -170,17 +174,28 @@ int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]) {
 int test_move(unsigned short xi, unsigned short yi, char *xpm[], 
 				unsigned short hor, short delta, unsigned short time) {
 
-	vg_init(0x105);
-
 	int ipc_status;
 	message msg;
 	int request;
 	int irq_set1,irq_set2;
-	int velocidade= delta/time;
+
+	int velocidade = (delta/time)/FPS;
+	if(velocidade == 0){
+		if (delta > 0){
+			velocidade = 1;
+		}
+		else{
+			velocidade = -1;
+		}
+	}
+
+	vg_color_buffer(black);
 
 	counter = 0;
 	irq_set1 = subscribe_kbd();
 	irq_set2 = subscribe_timer();
+
+	vg_init(0x105);
 
 	while (scanCode != EXIT_BREAK_CODE) {
 		request = driver_receive(ANY, &msg, &ipc_status);
@@ -195,9 +210,9 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 					kbd_handler();
 				}
 				if (msg.NOTIFY_ARG & irq_set2) {
-					timer_handler();
-					if(counter%60 == 0){
-						vg_draw_xpm(xi,yi,xpm);
+					if(counter % (int)(60/FPS) == 0){
+						flip();
+						vg_animate_xpm(xi,yi,xpm,&velocidade);
 						if(!hor){
 							xi+=velocidade;
 						}
@@ -205,9 +220,10 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 							yi+=velocidade;
 						}
 					}
-					if(counter== time*60){
+					if(counter == time * 60){
 						unsubscribe_timer();
 					}
+					timer_handler();
 				}
 				break;
 			default:
@@ -217,6 +233,7 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 		else {
 		}
 	}
+	unsubscribe_timer();
 	unsubscribe_kbd();
 	vg_exit();
 	return 0;
