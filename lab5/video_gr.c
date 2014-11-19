@@ -8,8 +8,14 @@
 #include <string.h>
 
 #include "vbe.h"
-#define PB2BASE(x) (((x) >> 4) & 0x0F000)
-#define PB2OFF(x) ((x) & 0x0FFFF)
+#include "lmlib.h"
+#include "sprite.h"
+
+#define LINEAR_MODEL_BIT 14
+#define BIOS_SERVICE 0x10
+#define SET_MODE 0x4F02
+#define BIT(n) (0x01 << (n))
+
 
 
 /* Constants for VBE 0x105 mode */
@@ -68,9 +74,9 @@ void *vg_init(unsigned short mode)
 	if(video_mem == MAP_FAILED)
 		panic("video_gr couldn't map video memory");
 
-	r.u.w.ax = 0x4F02; // VBE call, function 02 -- set VBE mode
-	r.u.w.bx = 1<<14|mode; // set bit 14: linear framebuffer
-	r.u.b.intno = 0x10;
+	r.u.w.ax = SET_MODE; // VBE call, function 02 -- set VBE mode
+	r.u.w.bx = BIT(LINEAR_MODEL_BIT)|mode; // set bit 14: linear framebuffer
+	r.u.b.intno = BIOS_SERVICE;
 	if( sys_int86(&r) != OK ) {
 		printf("set_vbe_mode: sys_int86() failed \n");
 		return NULL;
@@ -238,6 +244,17 @@ int vg_exit() {
   } else
       return 0;
 }
+/*
+ * Only works for 8 bits per pixel
+ */
+void draw_buffer(unsigned short x, unsigned short y, unsigned long color){
+	if(x < h_res && y < v_res && color){
+		char *bptr;
+		bptr = second_buff;
+		bptr += (y * h_res + x);
+		*bptr = color;
+	}
+}
 void vg_color_buffer(unsigned long color){
 	int i;
 	int j = 0;
@@ -252,7 +269,9 @@ void vg_color_buffer(unsigned long color){
 			*ptr = tmp;
 			color2 >>= 8;
 			ptr++;
+			j++;
 		}
+		j=0;
 	}
 }
 void flip(){
@@ -260,42 +279,18 @@ void flip(){
 	ptr_vid = video_mem;
 	char *ptr_buff;
 	ptr_buff = second_buff;
-	int i = 0;
-	unsigned int size = (bits_per_pixel / 8) * h_res * v_res;
-	while (i < size)
-	{
-		*ptr_vid = *ptr_buff;
-		ptr_vid++;
-		ptr_buff++;
-		i++;
-	}
+	int size = h_res*v_res*(bits_per_pixel/8);
+	memcpy(ptr_vid,ptr_buff, size);
 }
-void vg_animate_xpm(short xi,short yi, char *map[],int *velocidade){
-	int wd;
-	int ht;
-	char *pic;
-	pic = read_xpm(map,&wd,&ht);
-	unsigned int i,j;
-	if(xi < 0){
-		xi = 0;
-		*velocidade = -(*velocidade);
-	}
-	else if(xi + wd > h_res){
-		xi = h_res - wd;
-		*velocidade = -(*velocidade);
-	}
-	else if(yi < 0){
-		yi=0;
-		*velocidade = -(*velocidade);
-	}
-	else if(abs(yi + ht) > v_res){
-		yi = v_res - ht;
-		*velocidade = -(*velocidade);
-	}
-	for(i = 0; i < ht; i++) {
-		for(j = 0; j < wd; j++){
-			vg_draw_pixel(xi+j,yi+i,*pic);
-			pic++;
+void draw_sprite(Sprite *sprite){
+	int i,j;
+	char *bptr;
+	bptr = sprite->map;
+	for(i = 0; i < sprite->height; i++) {
+		for(j = 0; j < sprite->width; j++){
+			draw_buffer((int)sprite->x + j ,(int)sprite->y + i,*bptr);
+			bptr++;
 		}
 	}
+	animate_sprite(sprite, h_res, v_res);
 }
