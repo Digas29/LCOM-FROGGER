@@ -1,6 +1,8 @@
 #ifndef __VIDEO_GR_H
 #define __VIDEO_GR_H
 
+
+
 /** @defgroup video_gr video_gr
  * @{
  *
@@ -27,8 +29,8 @@ void *vg_init(unsigned short mode);
  */
 int vg_exit(void);
 
-void draw_pixel(unsigned short x, unsigned short y, unsigned long color);
-
  /** @} end of video_gr */
+
+char *read_xpm(char *map[], int *wd, int *ht);
  
 #endif /* __VIDEO_GR_H */

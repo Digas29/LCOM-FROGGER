@@ -2,12 +2,14 @@
 #include "timer.h"
 #include "video_gr.h"
 #include "test5.h"
+#include "sprite.h"
 #include <minix/sysutil.h>
 #include <minix/syslib.h>
 #include <minix/drivers.h>
 
-#define FPS 20
+#define FPS 60
 #define round(x) (x<0?ceil((x)-0.5):floor((x)+0.5))
+#define GRAPHIC_MODE 0x105
 
 unsigned long scanCode;
 unsigned int counter;
@@ -60,7 +62,7 @@ void *test_init(unsigned short mode, unsigned short delay) {
 }
 
 int test_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color) {
-	vg_init(0x105);
+	vg_init(GRAPHIC_MODE);
 
 	int ipc_status;
 	message msg;
@@ -97,7 +99,7 @@ int test_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 
 int test_line(unsigned short xi, unsigned short yi, 
 		           unsigned short xf, unsigned short yf, unsigned long color) {
-	vg_init(0x105);
+	vg_init(GRAPHIC_MODE);
 
 	int ipc_status;
 	message msg;
@@ -135,7 +137,7 @@ int test_line(unsigned short xi, unsigned short yi,
 
 int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]) {
 	
-	vg_init(0x105);
+	vg_init(GRAPHIC_MODE);
 
 	int ipc_status;
 	message msg;
@@ -178,24 +180,26 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 	message msg;
 	int request;
 	int irq_set1,irq_set2;
-
-	int velocidade = (delta/time)/FPS;
-	if(velocidade == 0){
-		if (delta > 0){
-			velocidade = 1;
-		}
-		else{
-			velocidade = -1;
-		}
+	vg_init(GRAPHIC_MODE);
+	Sprite*sprite = create_sprite(xpm);
+	if(!hor){
+		sprite->xspeed = ((double)delta/(double)time)/FPS;
+		sprite->yspeed = 0;
 	}
+	else{
+		sprite->xspeed = 0;
+		sprite->yspeed =  ((double)delta/(double)time)/FPS;
+	}
+	sprite->x = xi;
+	sprite->y = yi;
 
 	vg_color_buffer(black);
+	draw_sprite(sprite);
 
 	counter = 0;
 	irq_set1 = subscribe_kbd();
 	irq_set2 = subscribe_timer();
 
-	vg_init(0x105);
 
 	while (scanCode != EXIT_BREAK_CODE) {
 		request = driver_receive(ANY, &msg, &ipc_status);
@@ -212,13 +216,8 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 				if (msg.NOTIFY_ARG & irq_set2) {
 					if(counter % (int)(60/FPS) == 0){
 						flip();
-						vg_animate_xpm(xi,yi,xpm,&velocidade);
-						if(!hor){
-							xi+=velocidade;
-						}
-						else{
-							yi+=velocidade;
-						}
+						vg_color_buffer(black);
+						draw_sprite(sprite);
 					}
 					if(counter == time * 60){
 						unsubscribe_timer();
@@ -238,4 +237,6 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 	vg_exit();
 	return 0;
 	
+}
+int test_controller(){
 }
