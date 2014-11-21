@@ -36,6 +36,14 @@ void animate_sprite(Sprite *sp, int h_res, int v_res){
 		sp->yspeed = - sp->yspeed;
 	}
 }
+void delete_sprite(Sprite *sp){
+	int i,j;
+	for(i=0;i < sp->height;i++){
+		for(j=0;j < sp->width;j++){
+			draw_buffer((int)sp->x + j ,(int)sp->y + i,0);
+		}
+	}
+}
 
 void destroy_sprite(Sprite *sp) {
 	if( sp == NULL )

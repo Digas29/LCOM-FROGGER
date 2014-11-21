@@ -3,6 +3,7 @@
 #include <machine/int86.h>
 #include <sys/mman.h>
 #include <sys/types.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,6 +16,7 @@
 #define BIOS_SERVICE 0x10
 #define SET_MODE 0x4F02
 #define BIT(n) (0x01 << (n))
+#define REALPTR(off,seg) (((seg) *16) + (off))
 
 
 
@@ -248,7 +250,7 @@ int vg_exit() {
  * Only works for 8 bits per pixel
  */
 void draw_buffer(unsigned short x, unsigned short y, unsigned long color){
-	if(x < h_res && y < v_res && color){
+	if(x < h_res && y < v_res){
 		char *bptr;
 		bptr = second_buff;
 		bptr += (y * h_res + x);
@@ -282,6 +284,7 @@ void flip(){
 	int size = h_res*v_res*(bits_per_pixel/8);
 	memcpy(ptr_vid,ptr_buff, size);
 }
+
 void draw_sprite(Sprite *sprite){
 	int i,j;
 	char *bptr;
@@ -292,5 +295,17 @@ void draw_sprite(Sprite *sprite){
 			bptr++;
 		}
 	}
+}
+int controler_info(){
+	VbeInfoBlock info;
+	vbe_get_controler_info(&info);
+	uint16_t *mode_ptr;
+	mode_ptr = (uint16_t*)REALPTR(info.VideoModePtr[0], info.VideoModePtr[1]);
+	printf("%x \n", mode_ptr);
+	return 0;
+}
+int buffer_delete_sprite(Sprite *sprite){
+	delete_sprite(sprite);
 	animate_sprite(sprite, h_res, v_res);
+	return 0;
 }

@@ -71,7 +71,7 @@ int test_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 
 	irq_set = subscribe_kbd();
 
-	while (scanCode != EXIT_BREAK_CODE) {
+	while (scanCode != EXIT_MAKE_CODE) {
 		request = driver_receive(ANY, &msg, &ipc_status);
 		if (request != 0) {
 			printf("driver_receive failed with: %d", request);
@@ -108,7 +108,7 @@ int test_line(unsigned short xi, unsigned short yi,
 
 	irq_set = subscribe_kbd();
 
-	while (scanCode != EXIT_BREAK_CODE) {
+	while (scanCode != EXIT_MAKE_CODE) {
 		request = driver_receive(ANY, &msg, &ipc_status);
 		if (request != 0) {
 			printf("driver_receive failed with: %d", request);
@@ -146,7 +146,7 @@ int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]) {
 
 	irq_set = subscribe_kbd();
 
-	while (scanCode != EXIT_BREAK_CODE) {
+	while (scanCode != EXIT_MAKE_CODE) {
 		request = driver_receive(ANY, &msg, &ipc_status);
 		if (request != 0) {
 			printf("driver_receive failed with: %d", request);
@@ -201,7 +201,7 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 	irq_set2 = subscribe_timer();
 
 
-	while (scanCode != EXIT_BREAK_CODE) {
+	while (scanCode != EXIT_MAKE_CODE) {
 		request = driver_receive(ANY, &msg, &ipc_status);
 		if (request != 0) {
 			printf("driver_receive failed with: %d", request);
@@ -216,7 +216,7 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 				if (msg.NOTIFY_ARG & irq_set2) {
 					if(counter % (int)(60/FPS) == 0){
 						flip();
-						vg_color_buffer(black);
+						buffer_delete_sprite(sprite);
 						draw_sprite(sprite);
 					}
 					if(counter == time * 60){
@@ -239,4 +239,6 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 	
 }
 int test_controller(){
+	controler_info();
+	return 0;
 }
