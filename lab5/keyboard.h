@@ -1,7 +1,7 @@
 #ifndef __KEYBOARD_H
 #define __KEYBOARD_H
 
-#define EXIT_BREAK_CODE 0x81 //ESC KEY BREAK CODE
+#define EXIT_MAKE_CODE 0x1 //ESC KEY MAKE CODE
 #define DELAY_US 20000
 #define IRQ_KBD 1
 #define OUT_BUF 0x60

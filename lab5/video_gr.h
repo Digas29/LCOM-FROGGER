@@ -32,5 +32,7 @@ int vg_exit(void);
  /** @} end of video_gr */
 
 char *read_xpm(char *map[], int *wd, int *ht);
+
+void draw_buffer(unsigned short x, unsigned short y, unsigned long color);
  
 #endif /* __VIDEO_GR_H */

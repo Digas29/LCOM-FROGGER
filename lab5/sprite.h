@@ -45,6 +45,8 @@ Sprite * create_sprite(char *pic[]);
  */
 void animate_sprite(Sprite *sp, int h_res, int v_res);
 
+void delete_sprite(Sprite *sp);
+
 void destroy_sprite(Sprite *fig);
 
 
