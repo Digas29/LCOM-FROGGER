@@ -9,7 +9,7 @@
 #define BIOS_SERVICE 0x10
 #define VBE_GET_MODE_INFO 0x4F01
 #define VBE_GET_INFO 0x4F00
-#define REALPTR(off,seg) (((seg) *16) + (off))
+#define REALPTR(x) (((x) & 0xFFFF) + (((x) & (0xFFFF << 16)) >> 12))
 
 #define PB2BASE(x) (((x) >> 4) & 0x0F000)
 #define PB2OFF(x) ((x) & 0x0FFFF)
@@ -59,16 +59,19 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 
 	return 0;
 }
-int vbe_get_controler_info(VbeInfoBlock* info) {
+int vbe_get_controler_info(VESA_INFO* info) {
 	mmap_t map_info;
 
 	if(lm_init() != OK) return 1;
 
-	if (lm_alloc(512, &map_info) == NULL) {
+	if (lm_alloc(sizeof(VESA_INFO), &map_info) == NULL) {
 		printf("Allocation of memory error\n");
 		return 1;
 	}
-	strncpy(info->VbeSignature, "VBE2", 4);
+	info->VESASignature[0] = 'V';
+	info->VESASignature[1] = 'B';
+	info->VESASignature[2] = 'E';
+	info->VESASignature[3] = '2';
 
 	struct reg86u r;
 	r.u.w.ax = VBE_GET_INFO;
@@ -77,7 +80,7 @@ int vbe_get_controler_info(VbeInfoBlock* info) {
 	r.u.b.intno = BIOS_SERVICE;
 
 	if( sys_int86(&r) != OK ) {
-		printf("set_vbe_mode: sys_int86() failed \n");
+		printf("get_vbe_info: sys_int86() failed \n");
 		return 1;
 	}
 	switch(r.u.b.ah){
@@ -96,7 +99,15 @@ int vbe_get_controler_info(VbeInfoBlock* info) {
 	default:
 		break;
 	}
-	memcpy(info,map_info.virtual, 512);
+	memcpy(info,map_info.virtual, sizeof(VESA_INFO));
+	char* ptr = map_info.virtual - 0x100000;
+	ptr += REALPTR(info->VideoModePtr);
+	printf("%X \n", REALPTR(info->VideoModePtr));
+	printf("%c \n", REALPTR(info->VESASignature[0]));
+	printf("%c \n", REALPTR(info->VESASignature[1]));
+	printf("%c \n", REALPTR(info->VESASignature[2]));
+	printf("%c \n", REALPTR(info->VESASignature[3]));
+	printf("%X \n", ptr);
 	lm_free(&map_info);
 
 	return 0;

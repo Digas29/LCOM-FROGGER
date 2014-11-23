@@ -193,7 +193,6 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 	sprite->x = xi;
 	sprite->y = yi;
 
-	vg_color_buffer(black);
 	draw_sprite(sprite);
 
 	counter = 0;
@@ -215,8 +214,8 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 				}
 				if (msg.NOTIFY_ARG & irq_set2) {
 					if(counter % (int)(60/FPS) == 0){
-						flip();
-						buffer_delete_sprite(sprite);
+
+						update_sprite(sprite);
 						draw_sprite(sprite);
 					}
 					if(counter == time * 60){
