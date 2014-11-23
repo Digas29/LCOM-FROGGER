@@ -37,7 +37,6 @@
 /* Private global variables */
 
 static char *video_mem;		/* Process address to which VRAM is mapped */
-static char *second_buff; /* Second buffer */
 
 static unsigned h_res;		/* Horizontal screen resolution in pixels */
 static unsigned v_res;		/* Vertical screen resolution in pixels */
@@ -46,15 +45,15 @@ static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
 void *vg_init(unsigned short mode)
 {
 	struct reg86u r;
-	vbe_mode_info_t info;
+	vbe_mode_info_t *info = malloc(sizeof(vbe_mode_info_t));
 
-	if (vbe_get_mode_info(mode, &info) != 0)
+	if (vbe_get_mode_info(mode, info) != 0)
 	{
 		return NULL;
 	}
-	h_res=info.XResolution;
-	v_res=info.YResolution;
-	bits_per_pixel=info.BitsPerPixel;
+	h_res=info->XResolution;
+	v_res=info->YResolution;
+	bits_per_pixel=info->BitsPerPixel;
 
 	int erro;
 	struct mem_range mr;
@@ -63,7 +62,7 @@ void *vg_init(unsigned short mode)
 
 	unsigned int vram_size = h_res * v_res * (bits_per_pixel/8);
 
-	mr.mr_base = (phys_bytes)(info.PhysBasePtr);
+	mr.mr_base = (phys_bytes)(info->PhysBasePtr);
 	mr.mr_limit = mr.mr_base + vram_size;
 
 	if( OK != (erro = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
@@ -99,17 +98,18 @@ void *vg_init(unsigned short mode)
 	default:
 		break;
 	}
-	second_buff = malloc((bits_per_pixel / 8) * h_res * v_res);
 
-	return video_mem;
+	return (char*)(info->PhysBasePtr);
 }
 
 int vg_draw_pixel(unsigned short x, unsigned short y, unsigned long color){
-	if(x < h_res && y < v_res && color){
+	if(x < h_res && y < v_res){
 		char *vptr;
 		vptr = video_mem;
 		vptr += (y * h_res + x);
-		*vptr = color;
+		if((*vptr) != color){
+			*vptr = color;
+		}
 		return 0;
 	}
 	return 1;
@@ -246,44 +246,6 @@ int vg_exit() {
   } else
       return 0;
 }
-/*
- * Only works for 8 bits per pixel
- */
-void draw_buffer(unsigned short x, unsigned short y, unsigned long color){
-	if(x < h_res && y < v_res){
-		char *bptr;
-		bptr = second_buff;
-		bptr += (y * h_res + x);
-		*bptr = color;
-	}
-}
-void vg_color_buffer(unsigned long color){
-	int i;
-	int j = 0;
-	char *ptr;
-	ptr = second_buff;
-	unsigned long color2;
-	unsigned int size = h_res*v_res;
-	for(i=0; i < size; i++){
-		color2 = color;
-		while(j < bits_per_pixel/8){
-			unsigned long tmp = color2 & 0xFF;
-			*ptr = tmp;
-			color2 >>= 8;
-			ptr++;
-			j++;
-		}
-		j=0;
-	}
-}
-void flip(){
-	char *ptr_vid;
-	ptr_vid = video_mem;
-	char *ptr_buff;
-	ptr_buff = second_buff;
-	int size = h_res*v_res*(bits_per_pixel/8);
-	memcpy(ptr_vid,ptr_buff, size);
-}
 
 void draw_sprite(Sprite *sprite){
 	int i,j;
@@ -291,20 +253,20 @@ void draw_sprite(Sprite *sprite){
 	bptr = sprite->map;
 	for(i = 0; i < sprite->height; i++) {
 		for(j = 0; j < sprite->width; j++){
-			draw_buffer((int)sprite->x + j ,(int)sprite->y + i,*bptr);
+			if((*bptr) != 0){
+				vg_draw_pixel((int)sprite->x + j ,(int)sprite->y + i,*bptr);
+			}
 			bptr++;
 		}
 	}
 }
 int controler_info(){
-	VbeInfoBlock info;
-	vbe_get_controler_info(&info);
-	uint16_t *mode_ptr;
-	mode_ptr = (uint16_t*)REALPTR(info.VideoModePtr[0], info.VideoModePtr[1]);
-	printf("%x \n", mode_ptr);
+
+	VESA_INFO *info = malloc(sizeof(VESA_INFO));
+	vbe_get_controler_info(info);
 	return 0;
 }
-int buffer_delete_sprite(Sprite *sprite){
+int update_sprite(Sprite *sprite){
 	delete_sprite(sprite);
 	animate_sprite(sprite, h_res, v_res);
 	return 0;

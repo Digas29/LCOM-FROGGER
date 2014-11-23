@@ -14,14 +14,24 @@
  *
  * Packed VBE Mode Info Block 
  */ 
-typedef struct {
-   char VbeSignature[4];             // == "VESA"
-   uint16_t VbeVersion;                 // == 0x0300 for VBE 3.0
-   uint16_t OemStringPtr[2];            // isa vbeFarPtr
-   uint8_t Capabilities[4];
-   uint16_t VideoModePtr[2];         // isa vbeFarPtr
-   uint16_t TotalMemory;             // as # of 64KB blocks
-} __attribute__((packed)) VbeInfoBlock;
+/*
+ * Structed based on http://www.delorie.com/djgpp/doc/ug/graphics/vesa.html
+ */
+typedef struct
+{
+	unsigned char  VESASignature[4];
+	unsigned short VESAVersion;
+	unsigned long  OEMStringPtr;
+	unsigned char  Capabilities[4];
+	unsigned long  VideoModePtr;
+	unsigned short TotalMemory;
+	unsigned short OemSoftwareRev;
+	unsigned long  OemVendorNamePtr;
+	unsigned long  OemProductNamePtr;
+	unsigned long  OemProductRevPtr;
+	unsigned char  Reserved[222];
+	unsigned char  OemData[256];
+} __attribute__ ((packed)) VESA_INFO;
 
 typedef struct {
   /*  Mandatory information for all VBE revisions */
@@ -97,7 +107,7 @@ typedef struct {
  * @return 0 on success, non-zero otherwise
  */
 int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p);
-int vbe_get_controler_info(VbeInfoBlock *info);
+int vbe_get_controler_info(VESA_INFO *info);
 
  /** @} end of vbe */
 
