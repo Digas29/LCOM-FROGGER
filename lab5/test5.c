@@ -14,6 +14,8 @@
 unsigned long scanCode;
 unsigned int counter;
 
+phys_bytes vram_phisical_address;
+
 void kbd_handler() {
 	scanCode = kbc_read();
 }
@@ -23,8 +25,7 @@ void timer_handler(){
 }
 
 void *test_init(unsigned short mode, unsigned short delay) {
-	char *adress;
-	adress = vg_init(mode);
+	vg_init(mode);
 
 	int ipc_status;
 	message msg;
@@ -56,7 +57,7 @@ void *test_init(unsigned short mode, unsigned short delay) {
 	}
 	unsubscribe_timer();
 	vg_exit();
-	printf("0x%x \n",adress);
+	printf("0x%x\n",vram_phisical_address);
 	return 0;
 	
 }

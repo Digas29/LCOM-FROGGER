@@ -16,8 +16,8 @@
 #define BIOS_SERVICE 0x10
 #define SET_MODE 0x4F02
 #define BIT(n) (0x01 << (n))
-#define REALPTR(off,seg) (((seg) *16) + (off))
-
+#define END 0xFFFF
+#define REALPTR(x) (((x) & 0xFFFF) + (((x) & (0xFFFF0000)) >> 12))
 
 
 /* Constants for VBE 0x105 mode */
@@ -41,6 +41,8 @@ static char *video_mem;		/* Process address to which VRAM is mapped */
 static unsigned h_res;		/* Horizontal screen resolution in pixels */
 static unsigned v_res;		/* Vertical screen resolution in pixels */
 static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
+
+extern phys_bytes vram_phisical_address;
 
 void *vg_init(unsigned short mode)
 {
@@ -98,8 +100,8 @@ void *vg_init(unsigned short mode)
 	default:
 		break;
 	}
-
-	return (char*)(info->PhysBasePtr);
+	vram_phisical_address = info->PhysBasePtr;
+	return video_mem;
 }
 
 int vg_draw_pixel(unsigned short x, unsigned short y, unsigned long color){
@@ -261,9 +263,49 @@ void draw_sprite(Sprite *sprite){
 	}
 }
 int controler_info(){
+	mmap_t map_info;
 
-	VESA_INFO *info = malloc(sizeof(VESA_INFO));
-	vbe_get_controler_info(info);
+	if(lm_init() != OK) return 1;
+
+	VESA_INFO *info = (VESA_INFO *)lm_alloc(sizeof(VESA_INFO), &map_info);
+
+	info->VESASignature[0] = 'V';
+	info->VESASignature[1] = 'B';
+	info->VESASignature[2] = 'E';
+	info->VESASignature[3] = '2';
+
+
+	vbe_get_controler_info(map_info.phys);
+
+	char* ptr = map_info.virtual - 0x100000;
+	ptr += REALPTR(info->VideoModePtr);
+	unsigned short *videoModesPtr = (unsigned short *)ptr;
+	printf("Capabilites: \n");
+	if(info->Capabilities[0] & BIT(0)){
+		printf("DAC width is switchable to 8 bits per primary color\n");
+	}
+	else{
+		printf("DAC is fixed width, with 6 bits per primary color\n");
+	}
+	if(info->Capabilities[0] & BIT(1)){
+		printf("Controller is not VGA compatible\n");
+	}
+	else{
+		printf("Controller is VGA compatible\n");
+	}
+	if(info->Capabilities[0] & BIT(2)){
+		printf("When programming large blocks of information to the RAMDAC, use the blank bit in Function 09h.\n");
+	}
+	else{
+		printf("Normal RAMDAC operation\n");
+	}
+	printf("Modes: \n");
+	while(*videoModesPtr != END){
+		printf("0x%X \t", *videoModesPtr);
+		videoModesPtr++;
+	}
+	printf("VRAM SIZE:  %d\n", info->TotalMemory);
+	lm_free(&map_info);
 	return 0;
 }
 int update_sprite(Sprite *sprite){
