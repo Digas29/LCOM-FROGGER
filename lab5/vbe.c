@@ -9,7 +9,7 @@
 #define BIOS_SERVICE 0x10
 #define VBE_GET_MODE_INFO 0x4F01
 #define VBE_GET_INFO 0x4F00
-#define REALPTR(x) (((x) & 0xFFFF) + (((x) & (0xFFFF << 16)) >> 12))
+
 
 #define PB2BASE(x) (((x) >> 4) & 0x0F000)
 #define PB2OFF(x) ((x) & 0x0FFFF)
@@ -59,24 +59,12 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 
 	return 0;
 }
-int vbe_get_controler_info(VESA_INFO* info) {
-	mmap_t map_info;
-
-	if(lm_init() != OK) return 1;
-
-	if (lm_alloc(sizeof(VESA_INFO), &map_info) == NULL) {
-		printf("Allocation of memory error\n");
-		return 1;
-	}
-	info->VESASignature[0] = 'V';
-	info->VESASignature[1] = 'B';
-	info->VESASignature[2] = 'E';
-	info->VESASignature[3] = '2';
+int vbe_get_controler_info(phys_bytes address) {
 
 	struct reg86u r;
 	r.u.w.ax = VBE_GET_INFO;
-	r.u.w.es = PB2BASE(map_info.phys);
-	r.u.w.di = PB2OFF(map_info.phys);
+	r.u.w.es = PB2BASE(address);
+	r.u.w.di = PB2OFF(address);
 	r.u.b.intno = BIOS_SERVICE;
 
 	if( sys_int86(&r) != OK ) {
@@ -99,16 +87,6 @@ int vbe_get_controler_info(VESA_INFO* info) {
 	default:
 		break;
 	}
-	memcpy(info,map_info.virtual, sizeof(VESA_INFO));
-	char* ptr = map_info.virtual - 0x100000;
-	ptr += REALPTR(info->VideoModePtr);
-	printf("%X \n", REALPTR(info->VideoModePtr));
-	printf("%c \n", REALPTR(info->VESASignature[0]));
-	printf("%c \n", REALPTR(info->VESASignature[1]));
-	printf("%c \n", REALPTR(info->VESASignature[2]));
-	printf("%c \n", REALPTR(info->VESASignature[3]));
-	printf("%X \n", ptr);
-	lm_free(&map_info);
 
 	return 0;
 }
