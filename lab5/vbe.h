@@ -14,6 +14,7 @@
  *
  * Packed VBE Mode Info Block 
  */ 
+
 /*
  * Structed based on http://www.delorie.com/djgpp/doc/ug/graphics/vesa.html
  */
