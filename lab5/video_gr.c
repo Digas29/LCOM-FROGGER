@@ -266,9 +266,10 @@ void draw_sprite(Sprite *sprite){
 int controler_info(){
 	mmap_t map_info;
 
-	if(lm_init() != OK) return 1;
+	char * virtualBase = (char *) lm_init();
 
 	VESA_INFO *info = (VESA_INFO *)lm_alloc(sizeof(VESA_INFO), &map_info);
+
 
 	info->VESASignature[0] = 'V';
 	info->VESASignature[1] = 'B';
@@ -277,9 +278,9 @@ int controler_info(){
 
 
 	vbe_get_controler_info(map_info.phys);
+	char* ptr;
+	ptr = REALPTR(info->VideoModePtr) + virtualBase;
 
-	char* ptr = map_info.virtual - ONE_MB;
-	ptr += REALPTR(info->VideoModePtr);
 	unsigned short *videoModesPtr = (unsigned short *)ptr;
 	printf("Capabilites: \n");
 	if(info->Capabilities[0] & BIT(0)){
@@ -300,12 +301,12 @@ int controler_info(){
 	else{
 		printf("Normal RAMDAC operation\n");
 	}
-	printf("Modes: \n");
+	printf("\n Modes: \n");
 	while(*videoModesPtr != END){
 		printf("0x%X \t", *videoModesPtr);
 		videoModesPtr++;
 	}
-	printf("VRAM SIZE: %d blocks of 64 KB\n", info->TotalMemory);
+	printf("\n\n VRAM SIZE: %d blocks of 64 KB\n", info->TotalMemory);
 	lm_free(&map_info);
 	return 0;
 }

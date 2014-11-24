@@ -19,7 +19,9 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 
 	mmap_t map_info;
 
-	if(lm_init() != OK) return 1;
+	char * virtualBase = (char *) lm_init();
+
+	if(virtualBase == NULL) return 1;
 
 	if (lm_alloc(sizeof(vbe_mode_info_t), &map_info) == NULL) {
 		printf("Allocation of memory error\n");
