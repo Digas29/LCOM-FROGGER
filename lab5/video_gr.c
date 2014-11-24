@@ -305,7 +305,7 @@ int controler_info(){
 		printf("0x%X \t", *videoModesPtr);
 		videoModesPtr++;
 	}
-	printf("VRAM SIZE:  %d\n", info->TotalMemory);
+	printf("VRAM SIZE: %d KB\n", info->TotalMemory);
 	lm_free(&map_info);
 	return 0;
 }
