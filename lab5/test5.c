@@ -57,7 +57,7 @@ void *test_init(unsigned short mode, unsigned short delay) {
 	}
 	unsubscribe_timer();
 	vg_exit();
-	printf("0x%x\n",vram_phisical_address);
+	printf("VRAM physical address: 0x%x\n",vram_phisical_address);
 	return 0;
 	
 }
