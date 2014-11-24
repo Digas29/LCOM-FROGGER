@@ -17,6 +17,7 @@
 #define SET_MODE 0x4F02
 #define BIT(n) (0x01 << (n))
 #define END 0xFFFF
+#define ONE_MB 0x100000
 #define REALPTR(x) (((x) & 0xFFFF) + (((x) & (0xFFFF0000)) >> 12))
 
 
@@ -277,7 +278,7 @@ int controler_info(){
 
 	vbe_get_controler_info(map_info.phys);
 
-	char* ptr = map_info.virtual - 0x100000;
+	char* ptr = map_info.virtual - ONE_MB;
 	ptr += REALPTR(info->VideoModePtr);
 	unsigned short *videoModesPtr = (unsigned short *)ptr;
 	printf("Capabilites: \n");
