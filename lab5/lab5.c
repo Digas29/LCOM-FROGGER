@@ -29,7 +29,7 @@ static void print_usage(char *argv[]) {
 			"\t service run %s -args \"test_line <xi> <yi> <xf> <yf> <color>\" \n "
 			"\t service run %s -args \"test_xpm <xi> <yi> <*xpm[]>\" \n "
 			"\t service run %s -args \"test_move <xi> <yi> <*xpm[]> <hor> <delta> <time>\" \n "
-			"\t service run %s -args \"test_controller <>\" \n ",
+			"\t service run %s -args \"test_controller \" \n ",
 			argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
 
 }
@@ -116,7 +116,7 @@ static int proc_args(int argc, char *argv[]) {
 		else if (strncmp(xpm, "penguin", strlen("penguin")) == 0)
 			xpm_array = penguin;
 		else {
-			printf("XPM does not exist!!!\n");
+			printf("XPM does not exist!\n");
 			return 1;
 		}
 		printf("vg::test_xpm(%d, %d, %s) \n", xi, yi, xpm);

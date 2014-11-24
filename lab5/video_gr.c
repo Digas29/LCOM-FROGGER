@@ -269,6 +269,7 @@ int controler_info(){
 	mmap_t map_info;
 
 	char * virtualBase = (char *) lm_init();
+	if(virtualBase == NULL) return 1;
 
 	VESA_INFO *info = (VESA_INFO *)lm_alloc(sizeof(VESA_INFO), &map_info);
 
