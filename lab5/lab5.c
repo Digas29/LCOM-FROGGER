@@ -125,8 +125,7 @@ static int proc_args(int argc, char *argv[]) {
 	}
 	else if (strncmp(argv[1], "test_move", strlen("test_move")) == 0) {
 		if (argc != 8) {
-			printf(
-					"vg:: wrong no of arguments for test of test_move() \n");
+			printf("vg:: wrong no of arguments for test of test_move() \n");
 			return 1;
 		}
 		if ((xi = parse_long(argv[2], 10)) == ULONG_MAX)
@@ -152,7 +151,7 @@ static int proc_args(int argc, char *argv[]) {
 		else if (strncmp(xpm, "penguin", strlen("penguin")) == 0)
 			xpm_array = penguin;
 		else {
-			printf("ERROR!!!\n");
+			printf("XPM does not exist!\n");
 			return 1;
 		}
 		printf("vg::test_xpm(%d, %d, %s) \n", xi, yi, xpm);
