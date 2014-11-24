@@ -58,6 +58,8 @@ void *vg_init(unsigned short mode)
 	v_res=info->YResolution;
 	bits_per_pixel=info->BitsPerPixel;
 
+	printf("%d\n", h_res);
+
 	int erro;
 	struct mem_range mr;
 
