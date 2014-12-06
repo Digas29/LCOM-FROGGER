@@ -186,3 +186,14 @@ char* getBuffer(){
 char* getMouseBuffer(){
 	return mouseBuffer;
 }
+
+int bufffer_draw_rectangle(unsigned short x, unsigned short y, unsigned short width, unsigned short heigth, unsigned long color){
+	unsigned int i,j;
+	for(i = 0; i < width; i++) {
+		for(j = 0; j < heigth; j++){
+			buffer_draw_pixel(i + x, j + y, color);
+		}
+	}
+	if ((x + width) < h_res && (y + heigth) < v_res) return 0;
+	return 1;
+}

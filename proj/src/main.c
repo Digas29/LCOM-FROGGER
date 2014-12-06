@@ -9,8 +9,11 @@ int main(int argc, char **argv) {
 	sef_startup();
 	vg_init(0x114);
 
+
 	Frogger* frogger = newFrogger();
+
 	drawFrogger(frogger);
+
 	while(frogger->complete != 1){
 		updateFrogger(frogger);
 
@@ -22,7 +25,9 @@ int main(int argc, char **argv) {
 	 		flipVRAM();
 		}
 	}
+
 	deleteFrogger(frogger);
+
 	vg_exit();
     return 0;
 }

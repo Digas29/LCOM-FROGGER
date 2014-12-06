@@ -3,7 +3,7 @@ COMPILER_TYPE = gnu
 CC = gcc
 
 PROG = proj
-SRCS = main.c sprite.c vbe.c graphics.c colors.c bitmap.c frogger.c keyboard.c mouse.c timer.c
+SRCS = main.c sprite.c vbe.c graphics.c colors.c bitmap.c frogger.c keyboard.c mouse.c timer.c MainMenu.c rectangle.c
 
 CCFLAGS= -Wall -O3
 
