@@ -1,4 +1,11 @@
 
+MainMenu.o:	MainMenu.c
+MainMenu.o:	MainMenu.h
+MainMenu.o:	bitmap.h
+MainMenu.o:	graphics.h
+MainMenu.o:	mouse.h
+MainMenu.o:	rectangle.h
+
 bitmap.o:	/usr/include/minix/dir.h
 bitmap.o:	/usr/include/minix/types.h
 bitmap.o:	/usr/include/sys/null.h
@@ -61,12 +68,14 @@ frogger.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/string.h
 frogger.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/syslimits.h
 frogger.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/unistd.h
 frogger.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
+frogger.o:	MainMenu.h
 frogger.o:	bitmap.h
 frogger.o:	frogger.c
 frogger.o:	frogger.h
 frogger.o:	graphics.h
 frogger.o:	keyboard.h
 frogger.o:	mouse.h
+frogger.o:	rectangle.h
 frogger.o:	timer.h
 
 graphics.o:	/usr/include/errno.h
@@ -226,11 +235,13 @@ main.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/string.h
 main.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/syslimits.h
 main.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/unistd.h
 main.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
+main.o:	MainMenu.h
 main.o:	bitmap.h
 main.o:	frogger.h
 main.o:	graphics.h
 main.o:	main.c
 main.o:	mouse.h
+main.o:	rectangle.h
 main.o:	timer.h
 
 mouse.o:	/usr/include/errno.h
@@ -285,6 +296,9 @@ mouse.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
 mouse.o:	bitmap.h
 mouse.o:	mouse.c
 mouse.o:	mouse.h
+
+rectangle.o:	rectangle.c
+rectangle.o:	rectangle.h
 
 sprite.o:	/usr/include/minix/dir.h
 sprite.o:	/usr/include/minix/types.h

@@ -18,11 +18,16 @@ Frogger* newFrogger(){
 	frogger->IRQ_TIMER = subscribe_timer();
 	frogger->IRQ_M = subscribe_mouse();
 
+	frogger->estado = MAIN_MENU;
+	frogger->state = newMainMenu();
+	MainMenu * menu = (MainMenu *)frogger->state;
+
 	frogger->timer = newTimer();
 
 	newMouse();
 
-	frogger->complete = 0; frogger->refresh = 1;
+	frogger->complete = 0;
+	frogger->refresh = 1;
 	frogger->scanCode = 0;
 
 	return frogger;
@@ -61,20 +66,32 @@ void updateFrogger(Frogger* frogger){
 	}
 	if(frogger->timer->ticked == 1){
 		getMouse()->draw = 1;
+		MainMenu * menu = (MainMenu *)frogger->state;
+		updateMainMenu(menu,frogger->scanCode);
+
+	}
+	if(frogger->estado == MAIN_MENU){
+		MainMenu * menu = (MainMenu *)frogger->state;
+		if(menu->done){
+			frogger->complete = 1;
+		}
 	}
 }
 
 
 void drawFrogger(Frogger* frogger){
-	Bitmap* fundo = loadBitmap("/home/proj/res/main.bmp");
-	drawBitmap(fundo, 0, 0, ALIGN_LEFT);
+	if(frogger->estado == MAIN_MENU){
+		drawMainMenu((MainMenu *)frogger->state);
+	}
 }
 
 void deleteFrogger(Frogger* frogger){
 	//cancelar subscricoes
+
 	unsubscribe_kbd();
 	unsubscribe_mouse();
 	unsubscribe_timer();
+
 
 	free(frogger);
 }

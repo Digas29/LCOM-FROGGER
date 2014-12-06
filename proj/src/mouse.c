@@ -69,12 +69,25 @@ void updateMouse(){
 				mouse->leftButtonReleased = 1;
 			}
 		}
+		else{
+			mouse->leftButtonReleased = 0;
+		}
 		if(lastState.middleButtonDown){
 			if(!mouse->middleButtonDown){
 				mouse->middleButtonReleased = 1;
 			}
 		}
-		mouse->rightButtonReleased = 0;
+		else{
+			mouse->middleButtonReleased = 0;
+		}
+		if(lastState.rightButtonDown){
+			if(!mouse->rightButtonDown){
+				mouse->rightButtonReleased = 1;
+			}
+		}
+		else{
+			mouse->rightButtonReleased = 0;
+		}
 
 		mouse->update = 0;
 	}
