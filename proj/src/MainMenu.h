@@ -15,8 +15,6 @@ typedef struct{
 	Rec * highScoresButton;
 	int mouseExit;
 	Rec* exitButton;
-
-	int action;
 }MainMenu;
 
 MainMenu* newMainMenu();

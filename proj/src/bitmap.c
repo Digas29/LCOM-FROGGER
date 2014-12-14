@@ -119,6 +119,7 @@ void drawBitmap(Bitmap* bmp, int x, int y, Alignment alignment) {
 		imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
 
 		memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
+
 	}
 }
 

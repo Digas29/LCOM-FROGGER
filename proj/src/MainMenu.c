@@ -8,13 +8,12 @@ MainMenu* newMainMenu(){
 	menu->done = 0;
 	menu->fundo = loadBitmap("/home/proj/res/cenas.bmp");
 	menu->mousePlay = 0;
-	menu->playButton = newRec(300,100,500,200);
+	menu->playButton = newRec(300,200,500,250);
 	menu->mouseHighScores = 0;
-	menu->highScoresButton = newRec(300,250,500,350);
+	menu->highScoresButton = newRec(300,300,500,350);
 	menu->mouseExit = 0;
-	menu->exitButton = newRec(300,400,500,500);
+	menu->exitButton = newRec(300,400,500,450);
 
-	menu->action = 0;
 	return menu;
 }
 int mouseInsideRec(Rec* rect){
@@ -32,12 +31,14 @@ void updateMainMenu(MainMenu* menu, unsigned long scanCode){
 	if(m->leftButtonReleased){
 		if(mouseInsideRec(menu->playButton)){
 			menu->mousePlay = 1;
+			menu->done = 1;
 		}
 		else{
 			menu->mousePlay = 0;
 		}
 		if(mouseInsideRec(menu->highScoresButton)){
 			menu->mouseHighScores = 1;
+			menu->done = 1;
 		}
 		else{
 			menu->mouseHighScores = 0;
@@ -53,9 +54,9 @@ void updateMainMenu(MainMenu* menu, unsigned long scanCode){
 }
 void drawMainMenu(MainMenu* menu){
 	drawBitmap(menu->fundo,0,0,ALIGN_LEFT);
-	bufffer_draw_rectangle(300,200,200,50,50);
-	bufffer_draw_rectangle(300,300,200,50,50);
-	bufffer_draw_rectangle(300,400,200,50,50);
+	bufffer_draw_rectangle(300,200,200,50,0xF800);
+	bufffer_draw_rectangle(300,300,200,50,0xF800);
+	bufffer_draw_rectangle(300,400,200,50,0xF800);
 }
 void deleteMainMenu(MainMenu* menu){
 	deleteBitmap(menu->fundo);

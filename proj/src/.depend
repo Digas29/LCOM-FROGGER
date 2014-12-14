@@ -16,6 +16,10 @@ bitmap.o:	bitmap.c
 bitmap.o:	bitmap.h
 bitmap.o:	graphics.h
 
+car.o:	bitmap.h
+car.o:	car.c
+car.o:	car.h
+
 colors.o:	colors.c
 colors.o:	colors.h
 
@@ -70,13 +74,25 @@ frogger.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/unistd.h
 frogger.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
 frogger.o:	MainMenu.h
 frogger.o:	bitmap.h
+frogger.o:	car.h
 frogger.o:	frogger.c
 frogger.o:	frogger.h
+frogger.o:	game.h
 frogger.o:	graphics.h
 frogger.o:	keyboard.h
 frogger.o:	mouse.h
 frogger.o:	rectangle.h
 frogger.o:	timer.h
+
+game.o:	MainMenu.h
+game.o:	bitmap.h
+game.o:	car.h
+game.o:	frogger.h
+game.o:	game.c
+game.o:	game.h
+game.o:	keyboard.h
+game.o:	rectangle.h
+game.o:	timer.h
 
 graphics.o:	/usr/include/errno.h
 graphics.o:	/usr/include/limits.h
