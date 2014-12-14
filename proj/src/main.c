@@ -12,11 +12,10 @@ int main(int argc, char **argv) {
 
 	Frogger* frogger = newFrogger();
 
-	drawFrogger(frogger);
 
 	while(frogger->complete != 1){
+		drawFrogger(frogger);
 		updateFrogger(frogger);
-
 		if(frogger->complete != 1){
 			flipMouseBuffer();
 	 		if(getMouse()->draw){
@@ -25,7 +24,6 @@ int main(int argc, char **argv) {
 	 		flipVRAM();
 		}
 	}
-
 	deleteFrogger(frogger);
 
 	vg_exit();

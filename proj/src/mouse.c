@@ -120,7 +120,7 @@ void drawMouse(){
 	char* bufferStartPos;
 	char* imgStartPos;
 
-	int i;
+	int i,j;
 	for (i = 0; i < height; i++) {
 		int pos = mouse->y + height - 1 - i;
 
@@ -132,7 +132,16 @@ void drawMouse(){
 
 		imgStartPos = mouse->cursor->bitmapData + xCorrection * 2 + i * width * 2;
 
-		memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
+		for(j=0; j < width; j++){
+			if((*imgStartPos | ((*(imgStartPos+1))>>4)) != 0){
+				*bufferStartPos = *imgStartPos;
+				*(bufferStartPos+1) = *(imgStartPos+1);
+			}
+			bufferStartPos++;
+			bufferStartPos++;
+			imgStartPos++;
+			imgStartPos++;
+		}
 	}
 	mouse->draw = 0;
 }

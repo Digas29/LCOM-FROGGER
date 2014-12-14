@@ -30,3 +30,7 @@ void updateFrogger(Frogger* frogger);
 void drawFrogger(Frogger* frogger);
 void deleteFrogger(Frogger* frogger);
 
+void changeState(Frogger* frogger, State newSate);
+void updateState(Frogger* frogger);
+void deleteState(Frogger* frogger);
+

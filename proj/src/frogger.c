@@ -5,9 +5,15 @@
 #include "frogger.h"
 #include "timer.h"
 #include "bitmap.h"
+#include "game.h"
 
 const int FRAMES_PER_SECOND = 30;
 const int mouse_multiplier = 2;
+
+const int getFPS(){
+	return FRAMES_PER_SECOND;
+}
+
 Frogger* newFrogger(){
 
 	//alocar espaco em memoria
@@ -18,9 +24,8 @@ Frogger* newFrogger(){
 	frogger->IRQ_TIMER = subscribe_timer();
 	frogger->IRQ_M = subscribe_mouse();
 
-	frogger->estado = MAIN_MENU;
-	frogger->state = newMainMenu();
-	MainMenu * menu = (MainMenu *)frogger->state;
+	frogger->estado = GAME;
+	frogger->state = newGame();
 
 	frogger->timer = newTimer();
 
@@ -59,22 +64,28 @@ void updateFrogger(Frogger* frogger){
 			break;
 	  	}
 	}
-	if(frogger->scanCode != 0){
-		if(frogger->scanCode == KEY_ESC){
-			frogger->complete = 1;
-		}
-	}
-	if(frogger->timer->ticked == 1){
+	if(frogger->timer->ticked){
 		getMouse()->draw = 1;
-		MainMenu * menu = (MainMenu *)frogger->state;
-		updateMainMenu(menu,frogger->scanCode);
-
 	}
-	if(frogger->estado == MAIN_MENU){
-		MainMenu * menu = (MainMenu *)frogger->state;
-		if(menu->done){
-			frogger->complete = 1;
+	if(frogger->timer->counter % mouse_multiplier == 0){
+		switch(frogger->estado){
+		case MAIN_MENU:
+			updateMainMenu(frogger->state, frogger->scanCode);
+			break;
+		case GAME:
+			if(((Game*)frogger->state)->frog->dead){
+				if(frogger->timer->counter % 20 == 0){
+					updateGame(frogger->state, frogger->scanCode);
+				}
+			}
+			else{
+				updateGame(frogger->state, frogger->scanCode);
+			}
+			break;
+		default:
+			break;
 		}
+		updateState(frogger);
 	}
 }
 
@@ -82,6 +93,9 @@ void updateFrogger(Frogger* frogger){
 void drawFrogger(Frogger* frogger){
 	if(frogger->estado == MAIN_MENU){
 		drawMainMenu((MainMenu *)frogger->state);
+	}
+	if(frogger->estado == GAME){
+		drawGame((Game*)frogger->state);
 	}
 }
 
@@ -94,4 +108,54 @@ void deleteFrogger(Frogger* frogger){
 
 
 	free(frogger);
+}
+
+void changeState(Frogger* frogger, State newSate){
+	//deleteState(frogger);
+
+	frogger->estado = newSate;
+	switch(frogger->estado){
+	case MAIN_MENU:
+		frogger->state = newMainMenu();
+		break;
+	case GAME:
+		frogger->state = newGame();
+		break;
+	default:
+		break;
+	}
+}
+
+void updateState(Frogger* frogger){
+	switch(frogger->estado){
+	case MAIN_MENU:
+		if(((MainMenu*)frogger->state)->done){
+			if((*(MainMenu*)frogger->state).mousePlay){
+				changeState(frogger,GAME);
+			}
+			if((*(MainMenu*)frogger->state).mouseExit){
+				frogger->complete = 1;
+			}
+		}
+		break;
+	case GAME:
+		if(((Game*)frogger->state)->done){
+			frogger->complete = 1;
+		}
+		break;
+	default:
+		break;
+	}
+}
+void deleteState(Frogger* frogger){
+	switch(frogger->estado){
+	case MAIN_MENU:
+		deleteMainMenu((MainMenu*)frogger->state);
+		break;
+	case GAME:
+		deleteGame((Game*)frogger->state);
+		break;
+	default:
+		break;
+	}
 }
