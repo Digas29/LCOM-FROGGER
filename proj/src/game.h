@@ -2,6 +2,7 @@
 
 #include "bitmap.h"
 #include "car.h"
+#include "log.h"
 
 #define laneMaxSize 7
 #define riverMaxSize 5
@@ -29,13 +30,15 @@ typedef struct{
 } Lane;
 
 typedef struct{
-	//Log * logs[riverMaxSize];
+	Log* logs[riverMaxSize];
+	int size;
 } River;
 
 
 typedef struct{
 	Bitmap * fundo;
 	Bitmap * carros;
+	Bitmap * troncos;
 
 	int gameover;
 	int lives;
@@ -46,11 +49,10 @@ typedef struct{
 	Lane* lane2;
 	Lane* lane3;
 	Lane* lane4;
-/*
-	River* river1;
+
 	River* river2;
 	River* river3;
-	*/
+	River* river5;
 } Game;
 
 Game* newGame();

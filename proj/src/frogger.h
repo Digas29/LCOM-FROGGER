@@ -19,6 +19,8 @@ typedef struct {
 
 	State estado;
 	void * state;
+	int draw;
+	int up;
 
 	unsigned long scanCode;
 	Timer* timer;

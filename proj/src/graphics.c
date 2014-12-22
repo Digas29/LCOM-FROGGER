@@ -147,26 +147,6 @@ int buffer_draw_line(unsigned short xi,unsigned short xf, unsigned short yi,unsi
 }
 
 
-void buffer_draw_bmp(Sprite *sprite){
-	int i,j;
-	char *bptr;
-	bptr = sprite->map;
-	for(i = 0; i < sprite->height; i++) {
-		for(j = 0; j < sprite->width; j++){
-			if((*bptr) != 0){
-				buffer_draw_pixel((int)sprite->x + j ,(int)sprite->y + i,*bptr);
-			}
-			bptr++;
-		}
-	}
-}
-int update_bmp(Sprite *sprite){
-	delete_sprite(sprite);
-	animate_sprite(sprite, h_res, v_res);
-	return 0;
-}
-
-
 void flipMouseBuffer(){
 	memcpy(mouseBuffer,buffer,h_res*v_res*(bits_per_pixel/8));
 }

@@ -26,8 +26,10 @@ Frogger* newFrogger(){
 
 	frogger->estado = GAME;
 	frogger->state = newGame();
+	frogger->draw = 1;
 
 	frogger->timer = newTimer();
+	frogger->up = 0;
 
 	newMouse();
 
@@ -50,15 +52,16 @@ void updateFrogger(Frogger* frogger){
 	if (is_ipc_notify(ipc_status)) {
 		switch (_ENDPOINT_P(msg.m_source)) {
 		case HARDWARE:
+			if (msg.NOTIFY_ARG & frogger->IRQ_M) {
+				updateMouse();
+			}
 			if (msg.NOTIFY_ARG & frogger->IRQ_KB) {
 				frogger->scanCode = kbc_read();
 			}
 			if (msg.NOTIFY_ARG & frogger->IRQ_TIMER) {
-	 			timerHandler(frogger->timer);
+				timerHandler(frogger->timer);
 			}
-			if (msg.NOTIFY_ARG & frogger->IRQ_M) {
-		    	updateMouse();
-			}
+			else
  			break;
 		default:
 			break;
@@ -66,16 +69,26 @@ void updateFrogger(Frogger* frogger){
 	}
 	if(frogger->timer->ticked){
 		getMouse()->draw = 1;
+		frogger->draw = 1;
 	}
 	if(frogger->timer->counter % mouse_multiplier == 0){
 		switch(frogger->estado){
-		case MAIN_MENU:
+	 	case MAIN_MENU:
 			updateMainMenu(frogger->state, frogger->scanCode);
 			break;
 		case GAME:
 			if(((Game*)frogger->state)->frog->dead){
 				if(frogger->timer->counter % 20 == 0){
 					updateGame(frogger->state, frogger->scanCode);
+				}
+			}
+			else if(((Game*)frogger->state)->gameover){
+				if(frogger->timer->counter % 20 == 0){
+					updateGame(frogger->state, frogger->scanCode);
+					((Game*)frogger->state)->gameover++;
+				}
+				if(((Game*)frogger->state)->gameover == 2){
+					((Game*)frogger->state)->done = 1;
 				}
 			}
 			else{
@@ -86,24 +99,34 @@ void updateFrogger(Frogger* frogger){
 			break;
 		}
 		updateState(frogger);
+		frogger->up = 1;
 	}
 }
 
 
 void drawFrogger(Frogger* frogger){
-	if(frogger->estado == MAIN_MENU){
-		drawMainMenu((MainMenu *)frogger->state);
+	if(frogger->up){
+		if(frogger->estado == MAIN_MENU){
+			drawMainMenu((MainMenu *)frogger->state);
+		}
+		if(frogger->estado == GAME){
+			drawGame((Game*)frogger->state);
+		}
+		frogger->up = 0;
 	}
-	if(frogger->estado == GAME){
-		drawGame((Game*)frogger->state);
+	flipMouseBuffer();
+	if(getMouse()->draw){
+		drawMouse();
 	}
+	flipVRAM();
+	frogger->draw = 0;
 }
 
 void deleteFrogger(Frogger* frogger){
 	//cancelar subscricoes
 
 	unsubscribe_kbd();
-	unsubscribe_mouse();
+	//unsubscribe_mouse();
 	unsubscribe_timer();
 
 

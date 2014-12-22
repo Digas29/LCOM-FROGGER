@@ -3,15 +3,15 @@
 #include <minix/drivers.h>
 #include "keyboard.h"
 
-static unsigned int hookID; // Keyboard hook ID
+static unsigned int hookID_k; // Keyboard hook ID
 
 
 int subscribe_kbd(void) {
-	hookID = 1; // bit de subscricao
-	int bitmask = BIT(hookID);
+	hookID_k = 1; // bit de subscricao
+	int bitmask = BIT(hookID_k);
 
-	if (sys_irqsetpolicy(IRQ_KBD, IRQ_REENABLE | IRQ_EXCLUSIVE, &hookID) != OK
-			|| sys_irqenable(&hookID) != OK) {
+	if (sys_irqsetpolicy(IRQ_KBD, IRQ_REENABLE | IRQ_EXCLUSIVE, &hookID_k) != OK
+			|| sys_irqenable(&hookID_k) != OK) {
 		return -1;
 	}
 
@@ -19,7 +19,7 @@ int subscribe_kbd(void) {
 }
 
 int unsubscribe_kbd() {
-	return sys_irqdisable(&hookID) != OK || sys_irqrmpolicy(&hookID) != OK;
+	return sys_irqdisable(&hookID_k) != OK || sys_irqrmpolicy(&hookID_k) != OK;
 }
 
 int kbc_read(){

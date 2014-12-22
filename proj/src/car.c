@@ -1,29 +1,29 @@
 #include "car.h"
 #include "bitmap.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 Car* newCar(int faixa){
 	Car* car = (Car*)malloc(sizeof(Car));
 	car->faixa = faixa;
 	car->vy = 0;
+	car->x = rand() % 561 + 120;
 	switch(faixa){
 	case 1:
-		car->x = 640;
-		car->y = 520;
+		car->y = 0.65*get_h_res();
 		car->vx = -(40/getFPS());
 		break;
 	case 2:
-		car->x = 120;
-		car->y = 480;
+		car->y = 0.6*get_h_res();
 		car->vx = 40/getFPS();
 		break;
 	case 3:
-		car->x = 640;
-		car->y = 440;
+		car->y = 0.55*get_h_res();
 		car->vx = -(40/getFPS());
 		break;
 	case 4:
-		car->x = 120;
-		car->y = 400;
+		car->y = 0.50*get_h_res();
 		car->vx = 40/getFPS();
 		break;
 	default:
@@ -33,13 +33,19 @@ Car* newCar(int faixa){
 }
 void updateCar(Car * car){
 	car->x = car->x + car->vx;
+	if(car->x >= 0.85*get_h_res()){
+		car->x = 0.15*get_h_res();
+	}
+	if(car->x <= 0.1*get_h_res()){
+		car->x = 0.8*get_h_res();
+	}
 }
 void drawCar(Car * car, Bitmap * img){
 	int width = img->bitmapInfoHeader.width;
 	int drawWidth = width/4;
 	int height = img->bitmapInfoHeader.height;
 
-	if (car->x + drawWidth < 120 || car->x > 640 || car->y + height < 0
+	if (car->x + drawWidth < 0.15*get_h_res() || car->x > 0.8*get_h_res() || car->y + height < 0
 			|| car->y > get_v_res())
 		return;
 
@@ -76,7 +82,7 @@ void drawCar(Car * car, Bitmap * img){
 		}
 
 		for(j=0; j < drawWidth; j++){
-			if(j > 160 - car->x && j < 640 - car->x){
+			if(j > 0.2*get_h_res() - car->x && j < 0.8*get_h_res() - car->x){
 				if((*imgStartPos | ((*(imgStartPos+1))>>4)) != 0){
 					*bufferStartPos = *imgStartPos;
 					*(bufferStartPos+1) = *(imgStartPos+1);
