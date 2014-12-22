@@ -2,12 +2,15 @@
 #include "frogger.h"
 #include "keyboard.h"
 #include "car.h"
+#include "log.h"
+#include <time.h>
 
 Game* newGame(){
 	Game * jogo = (Game*) malloc(sizeof(Game));
 
 	jogo->fundo = loadBitmap("/home/proj/res/test.bmp");
 	jogo->carros = loadBitmap("/home/proj/res/car_sprites.bmp");
+	jogo->troncos = loadBitmap("/home/proj/res/logs.bmp");
 
 	jogo->frog = newFrog();
 
@@ -15,15 +18,31 @@ Game* newGame(){
 	jogo->lane2 = (Lane*)malloc(sizeof(Lane));
 	jogo->lane3 = (Lane*)malloc(sizeof(Lane));
 	jogo->lane4 = (Lane*)malloc(sizeof(Lane));
+	jogo->river2 = (River*)malloc(sizeof(River));
+
+	srand(time(NULL));
 
 	jogo->lane1->cars[0] = newCar(1);
-	jogo->lane1->size = 1;
+	jogo->lane1->cars[1] = newCar(1);
+	jogo->lane1->size = 2;
+
 	jogo->lane2->cars[0] = newCar(2);
-	jogo->lane2->size = 1;
+	jogo->lane2->cars[1] = newCar(2);
+	jogo->lane2->cars[2] = newCar(2);
+	jogo->lane2->size = 3;
+
 	jogo->lane3->cars[0] = newCar(3);
-	jogo->lane3->size = 1;
+	jogo->lane3->cars[1] = newCar(3);
+	jogo->lane3->size = 2;
+
 	jogo->lane4->cars[0] = newCar(4);
-	jogo->lane4->size = 1;
+	jogo->lane4->cars[1] = newCar(4);
+	jogo->lane4->cars[2] = newCar(4);
+	jogo->lane4->size = 3;
+
+	jogo->river2->logs[0] = newLog(2);
+	jogo->river2->logs[1] = newLog(2);
+	jogo->river2->size = 2;
 
 	jogo->lives = 3;
 
@@ -50,6 +69,9 @@ void updateGame(Game* game, unsigned long scanCode){
 		for(i = 0; i < game->lane4->size; i++){
 			updateCar(game->lane4->cars[i]);
 		}
+		for(i = 0; i < game->river2->size; i++){
+			updateLog(game->river2->logs[i]);
+		}
 
 		int collision = 0;
 
@@ -66,6 +88,9 @@ void updateGame(Game* game, unsigned long scanCode){
 		case 4:
 			collision = checkLaneCollisions(game->frog, game->lane4);
 			break;
+		case 8:
+			collision = checkRiverCollisions(game->frog, game->river2);
+			break;
 		default:
 			break;
 		}
@@ -73,7 +98,7 @@ void updateGame(Game* game, unsigned long scanCode){
 			game->lives--;
 			game->frog->dead = 1;
 			if(!game->lives){
-				game->done = 1;
+				game->gameover = 1;
 			}
 			game->frog->dir = 5;
 		}
@@ -81,7 +106,6 @@ void updateGame(Game* game, unsigned long scanCode){
 }
 void drawGame(Game* game){
 	drawBitmap(game->fundo, 0, 0, ALIGN_LEFT);
-	drawFrog(game->frog);
 	int i;
 	for(i = 0; i < game->lane1->size; i++){
 		drawCar(game->lane1->cars[i], game->carros);
@@ -95,6 +119,10 @@ void drawGame(Game* game){
 	for(i = 0; i < game->lane4->size; i++){
 		drawCar(game->lane4->cars[i], game->carros);
 	}
+	for(i = 0; i < game->river2->size; i++){
+		drawLog(game->river2->logs[i], game->troncos);
+	}
+	drawFrog(game->frog);
 }
 void deleteGame(Game* game){
 	free(game);
@@ -107,8 +135,8 @@ Frog* newFrog(){
 	sapo->dir = 1;
 	sapo->anim = 0;
 
-	sapo->x = 380;
-	sapo->y = 560;
+	sapo->x = 0.475*get_h_res();
+	sapo->y = 0.7*get_h_res();
 	sapo->vx = 0;
 	sapo->vy = 0;
 
@@ -131,9 +159,9 @@ void updateFrog(Frog* sapo,unsigned long scanCode){
 			return;
 		case 7:
 			sapo->faixa = 0;
-			sapo->x = 380;
+			sapo->x = 0.475*get_h_res();
 			sapo->dir = 1;
-			sapo->y = 560;
+			sapo->y = 0.7*get_h_res();
 			sapo->dead = 0;
 			sapo->vy = 0;
 			sapo->vx = 0;
@@ -146,48 +174,50 @@ void updateFrog(Frog* sapo,unsigned long scanCode){
 		switch(scanCode){
 		case KEY_W:
 			sapo->dir = 1;
-			if(sapo->y - 40 < 0){
+			if(sapo->y - 0.05*get_h_res() < 0){
 				sapo->newY = 0;
 			}
 			else{
 				sapo->anim = 1;
-				sapo->newY = sapo->y - 40;
-				sapo->vy = - (40/getFPS());
-				sapo->faixa++;
+				sapo->newY = sapo->y - 0.05*get_h_res();
+				sapo->vy = - 5;
+				if(sapo->faixa < 6){
+					sapo->faixa++;
+				}
 			}
 			break;
 		case KEY_S:
 			sapo->dir = 3;
-			if(sapo->y + 40 > 560){
-				sapo->newY = 560;
+			if(sapo->y + 0.05*get_h_res() > 0.7*get_h_res()){
+				sapo->newY = 0.7*get_h_res();
 			}
 			else{
+				sapo->newY = sapo->y + 0.05*get_h_res();
 				sapo->anim = 1;
-				sapo->newY = sapo->y + 40;
-				sapo->vy = (40/getFPS());
+				sapo->vy = 5;
 				sapo->faixa--;
 			}
 			break;
 		case KEY_D:
 			sapo->dir = 2;
-			if(sapo->x + 40 > 600){
-				sapo->newY = 600;
+			if(sapo->x + 0.05*get_h_res() > 0.75*get_h_res()){
+				sapo->newX = 0.75*get_h_res();
 			}
 			else{
 				sapo->anim = 1;
-				sapo->newX = sapo->x + 40;
-				sapo->vx = (40/getFPS());
+				sapo->newX = sapo->x + 0.05*get_h_res();
+				sapo->vx = 5;
 			}
 			break;
 		case KEY_A:
 			sapo->dir = 4;
-			if(sapo->x - 40 < 160){
-				sapo->newY = 160;
+			if(sapo->x - 0.05*get_h_res() < 0.2*get_h_res()){
+				sapo->newX = 0.2*get_h_res();
 			}
 			else{
 				sapo->anim = 1;
-				sapo->newX = sapo->x - 40;
-				sapo->vx = -(40/getFPS());
+				sapo->newX = sapo->x - 0.05*get_h_res();
+				sapo->vx = -5;
 			}
 			break;
 		default:
@@ -203,16 +233,22 @@ void updateFrog(Frog* sapo,unsigned long scanCode){
 				sapo->y = sapo->newY;
 				sapo->vy = 0;
 				sapo->anim = 0;
+				if(sapo->newY <= 0.35*get_h_res()){
+					sapo->faixa++;
+				}
 			}
 		}
 		else if (sapo->vy > 0){
 			if(sapo->y + sapo->vy < sapo->newY){
 				sapo->y = sapo->y + sapo->vy;
 			}
-			else{
+	 		else{
 				sapo->y = sapo->newY;
 				sapo->vy = 0;
 				sapo->anim = 0;
+			}
+			if(sapo->newY <= 0.30*get_h_res()){
+				sapo->faixa--;
 			}
 		}
 		if(sapo->vx < 0){
@@ -244,7 +280,7 @@ void drawFrog(Frog* sapo){
 	int drawWidth = width/ 11;
 	int height = sapo->img->bitmapInfoHeader.height;
 
-	if (sapo->x + drawWidth < 160 || sapo->x > get_h_res() || sapo->y + height < 0
+	if (sapo->x + drawWidth < 0.2*get_h_res() || sapo->x > 0.8*get_h_res() || sapo->y + height < 0
 			|| sapo->y > get_v_res())
 		return;
 
@@ -282,7 +318,7 @@ void drawFrog(Frog* sapo){
 		case 6:
 			imgStartPos += (drawWidth * 2) * 9;
 			break;
-		case 7:
+		case 8:
 			imgStartPos += (drawWidth * 2) * 10;
 			break;
 		default:
@@ -316,4 +352,13 @@ int checkLaneCollisions(Frog * frog, Lane* lane){
 			return 1;
 	}
 	return 0;
+}
+int checkRiverCollisions(Frog * frog, River* river){
+	int i;
+	for(i = 0;i < river->size; i++){
+		if(!(frog->x + 40 < river->logs[i]->x || frog->x > river->logs[i]->x + river->logs[i]->width ||
+				frog->y + 40 < river->logs[i]->y || frog->y > river->logs[i]->y + 40))
+			return 0;
+	}
+	return 1;
 }

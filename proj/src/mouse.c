@@ -133,7 +133,7 @@ void drawMouse(){
 		imgStartPos = mouse->cursor->bitmapData + xCorrection * 2 + i * width * 2;
 
 		for(j=0; j < width; j++){
-			if((*imgStartPos | ((*(imgStartPos+1))>>4)) != 0){
+			if((*imgStartPos) != 0  && (*(imgStartPos+1)) != 0){
 				*bufferStartPos = *imgStartPos;
 				*(bufferStartPos+1) = *(imgStartPos+1);
 			}

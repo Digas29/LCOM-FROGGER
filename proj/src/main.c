@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include <minix/drivers.h>
 #include "frogger.h"
 #include "graphics.h"
@@ -14,14 +15,9 @@ int main(int argc, char **argv) {
 
 
 	while(frogger->complete != 1){
-		drawFrogger(frogger);
 		updateFrogger(frogger);
-		if(frogger->complete != 1){
-			flipMouseBuffer();
-	 		if(getMouse()->draw){
-				drawMouse();
-			}
-	 		flipVRAM();
+		if(frogger->draw){
+			drawFrogger(frogger);
 		}
 	}
 	deleteFrogger(frogger);
