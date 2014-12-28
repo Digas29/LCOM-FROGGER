@@ -19,11 +19,13 @@ Game* newGame(){
 	jogo->tartarugas2 = loadBitmap("/home/proj/res/turtle_2_sprites.bmp");
 	jogo->tartarugas3 = loadBitmap("/home/proj/res/turtle_3_sprites.bmp");
 	jogo->toca = loadBitmap("/home/proj/res/toca.bmp");
+
+	jogo->frog = newFrog();
 	int i;
 	for(i = 0;i < 5; i++){
 		jogo->sapos[i] = 0;
 	}
-	jogo->frog = newFrog();
+
 
 	jogo->lane1 = (Lane*)malloc(sizeof(Lane));
 	jogo->lane2 = (Lane*)malloc(sizeof(Lane));
@@ -81,6 +83,7 @@ Game* newGame(){
 	jogo->river5->logs[1] = newLog(5);
 	jogo->river5->size = 2;
 
+	jogo->level = 1;
 	jogo->lives = 3;
 
 	jogo->gameover = 0;
@@ -219,7 +222,7 @@ void drawGame(Game* game){
 	}
 	for (i = 0; i < 5; i++){
 		if(game->sapos[i]){
-			drawBitmapT(game->toca, 0.3475*get_h_res(), 0.1 *get_h_res(), ALIGN_LEFT);
+			drawBitmapT(game->toca, (0.22 + i * 0.1275)*get_h_res(), 0.1 *get_h_res(), ALIGN_LEFT);
 		}
 	}
 	drawFrog(game->frog);
