@@ -54,9 +54,11 @@ typedef struct{
 
 	int sapos[5];
 
+	int level;
 	int gameover;
 	int lives;
 	int done;
+
 	Frog* frog;
 
 	Lane* lane1;
