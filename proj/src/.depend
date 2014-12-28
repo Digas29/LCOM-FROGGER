@@ -95,6 +95,7 @@ frogger.o:	timer.h
 
 game.o:	/usr/include/sys/null.h
 game.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/ansi.h
+game.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stdlib.h
 game.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/time.h
 game.o:	MainMenu.h
 game.o:	bitmap.h
@@ -102,10 +103,12 @@ game.o:	car.h
 game.o:	frogger.h
 game.o:	game.c
 game.o:	game.h
+game.o:	graphics.h
 game.o:	keyboard.h
 game.o:	log.h
 game.o:	rectangle.h
 game.o:	timer.h
+game.o:	turtles.h
 
 graphics.o:	/usr/include/errno.h
 graphics.o:	/usr/include/limits.h
@@ -404,6 +407,18 @@ timer.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
 timer.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdbool.h
 timer.o:	timer.c
 timer.o:	timer.h
+
+turtles.o:	/usr/include/minix/dir.h
+turtles.o:	/usr/include/minix/types.h
+turtles.o:	/usr/include/sys/null.h
+turtles.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/ansi.h
+turtles.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stdio.h
+turtles.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stdlib.h
+turtles.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/time.h
+turtles.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
+turtles.o:	bitmap.h
+turtles.o:	turtles.c
+turtles.o:	turtles.h
 
 vbe.o:	/usr/include/errno.h
 vbe.o:	/usr/include/limits.h

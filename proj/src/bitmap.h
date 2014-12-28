@@ -61,4 +61,6 @@ void drawBitmap(Bitmap* bitmap, int x, int y, Alignment alignment);
  */
 void deleteBitmap(Bitmap* bmp);
 
+void drawBitmapT(Bitmap* bmp, int x, int y, Alignment alignment);
+
 /**@}*/

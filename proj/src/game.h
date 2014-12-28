@@ -3,16 +3,19 @@
 #include "bitmap.h"
 #include "car.h"
 #include "log.h"
+#include "turtles.h"
 
 #define laneMaxSize 7
 #define riverMaxSize 5
-
+#define tMaxSize 5
 
 typedef struct{
 
 	int x,y;
 	int newX,newY;
 	double vx,vy;
+
+	int swamp;
 
 	int dir;
 	int anim;
@@ -34,11 +37,22 @@ typedef struct{
 	int size;
 } River;
 
+typedef struct{
+	Turtles* t[tMaxSize];
+	int size;
+} RiverT;
+
 
 typedef struct{
 	Bitmap * fundo;
+	Bitmap * camiao;
 	Bitmap * carros;
 	Bitmap * troncos;
+	Bitmap * tartarugas2;
+	Bitmap * tartarugas3;
+	Bitmap * toca;
+
+	int sapos[5];
 
 	int gameover;
 	int lives;
@@ -49,9 +63,12 @@ typedef struct{
 	Lane* lane2;
 	Lane* lane3;
 	Lane* lane4;
+	Lane* lane5;
 
+	RiverT* river1;
 	River* river2;
 	River* river3;
+	RiverT* river4;
 	River* river5;
 } Game;
 
