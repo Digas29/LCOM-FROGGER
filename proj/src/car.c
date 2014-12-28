@@ -26,6 +26,10 @@ Car* newCar(int faixa){
 		car->y = 0.50*get_h_res();
 		car->vx = 40/getFPS();
 		break;
+	case 5:
+		car->y = 0.45*get_h_res();
+		car->vx = -40/getFPS();
+		break;
 	default:
 		break;
 	}
@@ -83,7 +87,46 @@ void drawCar(Car * car, Bitmap * img){
 
 		for(j=0; j < drawWidth; j++){
 			if(j > 0.2*get_h_res() - car->x && j < 0.8*get_h_res() - car->x){
-				if((*imgStartPos | ((*(imgStartPos+1))>>4)) != 0){
+				if((*imgStartPos) != 0 || (*(imgStartPos+1)) != 0){
+					*bufferStartPos = *imgStartPos;
+					*(bufferStartPos+1) = *(imgStartPos+1);
+				}
+			}
+			bufferStartPos++;
+			bufferStartPos++;
+			imgStartPos++;
+			imgStartPos++;
+		}
+	}
+}
+void drawTruck(Car * car, Bitmap * img){
+	int width = img->bitmapInfoHeader.width;
+	int drawWidth = width;
+	int height = img->bitmapInfoHeader.height;
+
+	if (car->x + drawWidth < 0.15*get_h_res() || car->x > 0.8*get_h_res() || car->y + height < 0
+			|| car->y > get_v_res())
+		return;
+
+
+	char* bufferStartPos;
+	char* imgStartPos;
+
+	int i,j;
+	for (i = 0; i < height; i++) {
+		int pos = car->y + height - 1 - i;
+
+		if (pos < 0 || pos >= get_v_res())
+			continue;
+
+		bufferStartPos = (char*)getBuffer();
+		bufferStartPos += car->x * 2 + pos * get_h_res() * 2;
+
+		imgStartPos = img->bitmapData + i * width * 2;
+
+		for(j=0; j < drawWidth; j++){
+			if(j > 0.2*get_h_res() - car->x && j < 0.8*get_h_res() - car->x){
+				if((*imgStartPos) != 0 || (*(imgStartPos+1)) != 0){
 					*bufferStartPos = *imgStartPos;
 					*(bufferStartPos+1) = *(imgStartPos+1);
 				}

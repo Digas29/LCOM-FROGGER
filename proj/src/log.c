@@ -18,7 +18,7 @@ Log* newLog(int faixa){
 	case 3:
 		log->width = 0.245 *get_h_res();
 		log->y = 0.25 *get_h_res();
-		log->vx = -(40/getFPS())*2;
+		log->vx = (40/getFPS())*2;
 		break;
 	case 5:
 		log->width = 0.15875 *get_h_res();

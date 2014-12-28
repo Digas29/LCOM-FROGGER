@@ -122,6 +122,62 @@ void drawBitmap(Bitmap* bmp, int x, int y, Alignment alignment) {
 
 	}
 }
+void drawBitmapT(Bitmap* bmp, int x, int y, Alignment alignment) {
+	if (bmp == NULL)
+		return;
+
+	int width = bmp->bitmapInfoHeader.width;
+	int drawWidth = width;
+	int height = bmp->bitmapInfoHeader.height;
+
+	if (alignment == ALIGN_CENTER)
+		x -= width / 2;
+	else if (alignment == ALIGN_RIGHT)
+		x -= width;
+
+	if (x + width < 0 || x > get_h_res() || y + height < 0
+			|| y > get_v_res())
+		return;
+
+	int xCorrection = 0;
+	if (x < 0) {
+		xCorrection = -x;
+		drawWidth -= xCorrection;
+		x = 0;
+
+		if (drawWidth > get_h_res())
+			drawWidth = get_h_res();
+	} else if (x + drawWidth >= get_h_res()) {
+		drawWidth = get_h_res() - x;
+	}
+
+	char* bufferStartPos;
+	char* imgStartPos;
+
+	int i,j;
+	for (i = 0; i < height; i++) {
+		int pos = y + height - 1 - i;
+
+		if (pos < 0 || pos >= get_v_res())
+			continue;
+
+		bufferStartPos = (char*)getBuffer();
+		bufferStartPos += x * 2 + pos * get_h_res() * 2;
+
+		imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
+
+		for(j = 0; j < width; j++){
+			if((*imgStartPos) != 0 || (*(imgStartPos+1)) != 0){
+				*bufferStartPos = *imgStartPos;
+				*(bufferStartPos+1) = *(imgStartPos+1);
+			}
+			bufferStartPos++;
+			bufferStartPos++;
+			imgStartPos++;
+			imgStartPos++;
+		}
+	}
+}
 
 void deleteBitmap(Bitmap* bmp) {
     if (bmp == NULL)
