@@ -6,6 +6,7 @@
 #include "timer.h"
 #include "bitmap.h"
 #include "game.h"
+#include "strings.h"
 
 const int FRAMES_PER_SECOND = 30;
 const int mouse_multiplier = 2;
@@ -32,6 +33,7 @@ Frogger* newFrogger(){
 	frogger->up = 0;
 
 	newMouse();
+	newAlphabet();
 
 	frogger->complete = 0;
 	frogger->refresh = 1;
