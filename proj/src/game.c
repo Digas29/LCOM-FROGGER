@@ -4,6 +4,8 @@
 #include "car.h"
 #include "log.h"
 #include "turtles.h"
+#include "strings.h"
+#include "colors.h"
 #include <time.h>
 #include <stdlib.h>
 #include "graphics.h"
@@ -225,7 +227,9 @@ void drawGame(Game* game){
 			drawBitmapT(game->toca, (0.22 + i * 0.1275)*get_h_res(), 0.1 *get_h_res(), ALIGN_LEFT);
 		}
 	}
+
 	drawFrog(game->frog);
+	drawString("vidas", 0, 0, RGB888toRGB565(0,255,0));
 }
 void deleteGame(Game* game){
 	free(game);
@@ -308,7 +312,7 @@ void updateFrog(Frog* sapo,unsigned long scanCode){
 			}
 			break;
 		case KEY_D:
-			sapo->vx = 0;
+			sapo->vy = 0;
 			sapo->newX = 0;
 			sapo->dir = 2;
 			if(sapo->x + 0.05*get_h_res() > 0.75*get_h_res()){
@@ -321,7 +325,7 @@ void updateFrog(Frog* sapo,unsigned long scanCode){
 			}
 			break;
 		case KEY_A:
-			sapo->vx = 0;
+			sapo->vy = 0;
 			sapo->newX = 0;
 			sapo->dir = 4;
 			if(sapo->x - 0.05*get_h_res() < 0.2*get_h_res()){
@@ -475,7 +479,7 @@ int checkRiverCollisions(Frog * frog, River* river){
 	}
 	int i;
 	for(i = 0;i < river->size; i++){
-		if(!(frog->x + 26 < river->logs[i]->x || frog->x > river->logs[i]->x + river->logs[i]->width ||
+		if(!(frog->x + 26 < river->logs[i]->x || frog->x + 26 > river->logs[i]->x + river->logs[i]->width ||
 				frog->y + 26 < river->logs[i]->y || frog->y > river->logs[i]->y + 26)){
 			if(frog->vx == 0 && frog->vy == 0){
 				frog->vx = river->logs[i]->vx;
@@ -491,13 +495,14 @@ int checkRiverCollisions(Frog * frog, River* river){
 	}
 	return 1;
 }
+
 int checkRiverTCollisions(Frog * frog, RiverT* river){
 	if(frog->vy != 0){
 		return 0;
 	}
 	int i;
 	for(i = 0;i < river->size; i++){
-		if(!(frog->x + 26 < river->t[i]->x || frog->x > river->t[i]->x + river->t[i]->width ||
+		if(!(frog->x + 26 < river->t[i]->x || frog->x + 26 > river->t[i]->x + river->t[i]->width ||
 				frog->y + 26 < river->t[i]->y || frog->y > river->t[i]->y + 26)){
 			if(frog->vx == 0 && frog->vy == 0){
 				frog->vx = river->t[i]->vx;
@@ -518,9 +523,15 @@ int checkSwampCollision(Frog * frog){
 		return 0;
 	}
 	int i;
-	if(!(frog->x < 0.2125*get_h_res() || frog->x + 0.05*get_h_res() > 0.275*get_h_res()))
+	if(!(frog->x < 0.2125*get_h_res() || frog->x + 0.05*get_h_res() > 0.28035*get_h_res()))
 		return 0;
 	if(!(frog->x < 0.3375*get_h_res() || frog->x + 0.05*get_h_res() > 0.40625*get_h_res()))
 		return 1;
+	if(!(frog->x < 0.4625*get_h_res() || frog->x + 0.05*get_h_res() > 0.53035*get_h_res()))
+		return 2;
+	if(!(frog->x < 0.5875*get_h_res() || frog->x + 0.05*get_h_res() > 0.65625*get_h_res()))
+		return 3;
+	if(!(frog->x < 0.7125*get_h_res() || frog->x + 0.05*get_h_res() > 0.78125*get_h_res()))
+		return 4;
 	return -1;
 }
