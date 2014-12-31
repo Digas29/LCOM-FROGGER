@@ -8,6 +8,7 @@
 
 int main(int argc, char **argv) {
 	sef_startup();
+	sys_enable_iop(SELF);
 	vg_init(0x114);
 
 

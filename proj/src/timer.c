@@ -1,9 +1,11 @@
 #include <minix/syslib.h>
 #include <minix/drivers.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include "timer.h"
 
 static unsigned int hookID_t; // [0,31] escolher o bit de susbcricao
+Timer* timer = NULL;
 
 int subscribe_timer(void ) {
 	hookID_t = 0;
@@ -22,21 +24,25 @@ int unsubscribe_timer() {
 	return 0;
 }
 
-Timer * newTimer(){
-	Timer* timer = malloc(sizeof(Timer));
+void newTimer(){
+	Timer* t = malloc(sizeof(Timer));
 
-	timer->counter = 0;
-	timer->ticked = 0;
-	return timer;
+	t->counter = 0;
+	t->ticked = 0;
+	timer = t;
 }
-void timerHandler(Timer * timer){
+void timerHandler(){
 	timer->counter++;
 	timer->ticked = 1;
 
 }
-void resetTimerFlag(Timer* timer){
+void resetTimerFlag(){
 	timer->ticked = 0;
 }
-void deleteTimer(Timer * timer){
+void deleteTimer(){
 	free(timer);
+	timer = NULL;
+}
+Timer * getTimer(){
+	return timer;
 }

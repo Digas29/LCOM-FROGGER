@@ -14,6 +14,7 @@ typedef struct {
 	int IRQ_KB;
 	int IRQ_TIMER;
 	int IRQ_M;
+	int IRQ_R;
 
 	int complete, refresh;
 
@@ -23,7 +24,6 @@ typedef struct {
 	int up;
 
 	unsigned long scanCode;
-	Timer* timer;
 } Frogger;
 
 

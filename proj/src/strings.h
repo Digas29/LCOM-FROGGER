@@ -3,6 +3,7 @@
 #include "bitmap.h"
 #include "stdio.h"
 
+
 typedef struct {
 	Bitmap* A;
 	Bitmap* B;
@@ -30,6 +31,16 @@ typedef struct {
 	Bitmap* X;
 	Bitmap* Y;
 	Bitmap* Z;
+	Bitmap* d0;
+	Bitmap* d1;
+	Bitmap* d2;
+	Bitmap* d3;
+	Bitmap* d4;
+	Bitmap* d5;
+	Bitmap* d6;
+	Bitmap* d7;
+	Bitmap* d8;
+	Bitmap* d9;
 } Alphabet;
 
 void newAlphabet();

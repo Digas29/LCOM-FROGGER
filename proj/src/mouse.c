@@ -64,29 +64,23 @@ void updateMouse(){
 		mouse->leftButtonDown = LB(mouse->packet[0]);
 		mouse->middleButtonDown = MB(mouse->packet[0]);
 		mouse->rightButtonDown = RB(mouse->packet[0]);
+		mouse->leftButtonReleased = 0;
+		mouse->middleButtonReleased = 0;
+		mouse->rightButtonReleased = 0;
 		if(lastState.leftButtonDown){
 			if(!mouse->leftButtonDown){
 				mouse->leftButtonReleased = 1;
 			}
-		}
-		else{
-			mouse->leftButtonReleased = 0;
 		}
 		if(lastState.middleButtonDown){
 			if(!mouse->middleButtonDown){
 				mouse->middleButtonReleased = 1;
 			}
 		}
-		else{
-			mouse->middleButtonReleased = 0;
-		}
 		if(lastState.rightButtonDown){
 			if(!mouse->rightButtonDown){
 				mouse->rightButtonReleased = 1;
 			}
-		}
-		else{
-			mouse->rightButtonReleased = 0;
 		}
 
 		mouse->update = 0;

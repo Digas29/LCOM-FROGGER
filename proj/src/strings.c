@@ -35,6 +35,16 @@ void newAlphabet(){
 	a->X = loadBitmap("/home/proj/res/letras/X.bmp");
 	a->Y = loadBitmap("/home/proj/res/letras/Y.bmp");
 	a->Z = loadBitmap("/home/proj/res/letras/Z.bmp");
+	a->d0 = loadBitmap("/home/proj/res/letras/0.bmp");
+	a->d1 = loadBitmap("/home/proj/res/letras/1.bmp");
+	a->d2 = loadBitmap("/home/proj/res/letras/2.bmp");
+	a->d3 = loadBitmap("/home/proj/res/letras/3.bmp");
+	a->d4 = loadBitmap("/home/proj/res/letras/4.bmp");
+	a->d5 = loadBitmap("/home/proj/res/letras/5.bmp");
+	a->d6 = loadBitmap("/home/proj/res/letras/6.bmp");
+	a->d7 = loadBitmap("/home/proj/res/letras/7.bmp");
+	a->d8 = loadBitmap("/home/proj/res/letras/8.bmp");
+	a->d9 = loadBitmap("/home/proj/res/letras/9.bmp");
 
 	letters = a;
 }
@@ -128,6 +138,39 @@ void drawChar(char caracter, int x, int y, unsigned long color){
 		break;
 	case 'z':
 		bmp = letters->Z;
+		break;
+	case ' ':
+		nextX = x + 0.025*get_h_res();
+		break;
+	case '0':
+		bmp = letters->d0;
+		break;
+	case '1':
+		bmp = letters->d1;
+		break;
+	case '2':
+		bmp = letters->d2;
+		break;
+	case '3':
+		bmp = letters->d3;
+		break;
+	case '4':
+		bmp = letters->d4;
+		break;
+	case '5':
+		bmp = letters->d5;
+		break;
+	case '6':
+		bmp = letters->d6;
+		break;
+	case '7':
+		bmp = letters->d7;
+		break;
+	case '8':
+		bmp = letters->d8;
+		break;
+	case '9':
+		bmp = letters->d9;
 		break;
 	default:
 		break;

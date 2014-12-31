@@ -13,6 +13,8 @@ typedef struct{
 	Rec * playButton;
 	int mouseHighScores;
 	Rec * highScoresButton;
+	int mouseSettings;
+	Rec* settingsButton;
 	int mouseExit;
 	Rec* exitButton;
 }MainMenu;
