@@ -1,5 +1,6 @@
 #include "turtles.h"
 #include "bitmap.h"
+#include "timer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -30,6 +31,7 @@ Turtles* newTurtle(int faixa){
 	t->desenho = 0;
 	if(num >= 8){
 		t->anim = 1;
+		t->desenho = rand() % 3;
 	}
 	return t;
 }
@@ -43,10 +45,30 @@ void updateTurtle(Turtles * t){
 		t->x = 0.8*get_h_res();
 	}
 	if(t->anim){
-		if(t->desenho == 3){
-			t->desenho = -1;
+		switch(t->desenho){
+		case 0:
+			if(getTimer()->counter % 240 == 0){
+				t->desenho++;
+			}
+			break;
+		case 1:
+			if(getTimer()->counter % 30 == 0){
+				t->desenho++;
+			}
+			break;
+		case 2:
+			if(getTimer()->counter % 30 == 0){
+				t->desenho++;
+			}
+			break;
+		case 3:
+			if(getTimer()->counter % 30 == 0){
+				t->desenho = 0;
+			}
+			break;
+		default:
+			break;
 		}
-		t->desenho++;
 	}
 }
 void drawTurtle(Turtles * t, Bitmap * img){

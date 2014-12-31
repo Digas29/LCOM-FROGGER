@@ -51,9 +51,12 @@ typedef struct{
 	Bitmap * tartarugas2;
 	Bitmap * tartarugas3;
 	Bitmap * toca;
+	Bitmap * vidas;
 
 	int sapos[5];
 
+	int pontos;
+	int pause;
 	int level;
 	int gameover;
 	int lives;
@@ -85,3 +88,10 @@ void drawFrog(Frog* sapo);
 void deleteFrog(Frog* sapo);
 
 int checkLaneCollisions(Frog * frog, Lane* lane);
+int checkRiverCollisions(Frog * frog, River* river);
+int checkRiverTCollisions(Frog * frog, RiverT* river);
+int checkSwampCollision(Frog * frog);
+
+void addCar(Lane* lane, int faixa);
+void addLog(River* river, int faixa);
+void addTurtles(RiverT* river, int faixa);

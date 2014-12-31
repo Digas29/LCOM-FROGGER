@@ -7,6 +7,7 @@
 #include "bitmap.h"
 #include "game.h"
 #include "strings.h"
+#include "RTC.h"
 
 const int FRAMES_PER_SECOND = 30;
 const int mouse_multiplier = 2;
@@ -24,21 +25,22 @@ Frogger* newFrogger(){
 	frogger->IRQ_KB = subscribe_kbd();
 	frogger->IRQ_TIMER = subscribe_timer();
 	frogger->IRQ_M = subscribe_mouse();
+	frogger->IRQ_R = subscribe_RTC();
 
-	frogger->estado = GAME;
-	frogger->state = newGame();
+	frogger->estado = MAIN_MENU;
+	frogger->state = newMainMenu();
 	frogger->draw = 1;
 
-	frogger->timer = newTimer();
 	frogger->up = 0;
 
+	setupRTCInteruptions();
 	newMouse();
+	newTimer();
 	newAlphabet();
 
 	frogger->complete = 0;
 	frogger->refresh = 1;
 	frogger->scanCode = 0;
-
 	return frogger;
 }
 
@@ -46,7 +48,7 @@ void updateFrogger(Frogger* frogger){
 	int ipc_status,r;
 	message msg;
 
-	resetTimerFlag(frogger->timer);
+	resetTimerFlag();
 
 	if (driver_receive(ANY, &msg, &ipc_status) != 0 ) {
 		return;
@@ -58,10 +60,18 @@ void updateFrogger(Frogger* frogger){
 				updateMouse();
 			}
 			if (msg.NOTIFY_ARG & frogger->IRQ_KB) {
-				frogger->scanCode = kbc_read();
+				if(frogger->scanCode == 0xE0){
+					frogger->scanCode = (0xE0 << 8) | kbc_read();
+				}
+				else{
+					frogger->scanCode = kbc_read();
+				}
 			}
 			if (msg.NOTIFY_ARG & frogger->IRQ_TIMER) {
-				timerHandler(frogger->timer);
+				timerHandler();
+			}
+			if(msg.NOTIFY_ARG & frogger->IRQ_R){
+				RTC_IH();
 			}
 			else
  			break;
@@ -69,28 +79,22 @@ void updateFrogger(Frogger* frogger){
 			break;
 	  	}
 	}
-	if(frogger->timer->ticked){
+	if(getTimer()->ticked){
 		getMouse()->draw = 1;
 		frogger->draw = 1;
 	}
-	if(frogger->timer->counter % mouse_multiplier == 0){
+	if(getTimer()->counter % mouse_multiplier == 0){
 		switch(frogger->estado){
 	 	case MAIN_MENU:
 			updateMainMenu(frogger->state, frogger->scanCode);
 			break;
 		case GAME:
 			if(((Game*)frogger->state)->frog->dead){
-				if(frogger->timer->counter % 20 == 0){
+				if(getTimer()->counter % 30 == 0){
 					updateGame(frogger->state, frogger->scanCode);
-				}
-			}
-			else if(((Game*)frogger->state)->gameover){
-				if(frogger->timer->counter % 20 == 0){
-					updateGame(frogger->state, frogger->scanCode);
-					((Game*)frogger->state)->gameover++;
-				}
-				if(((Game*)frogger->state)->gameover == 2){
-					((Game*)frogger->state)->done = 1;
+					if(((Game*)frogger->state)->gameover){
+						((Game*)frogger->state)->gameover++;
+					}
 				}
 			}
 			else{
@@ -134,9 +138,21 @@ void deleteFrogger(Frogger* frogger){
 
 	free(frogger);
 }
+void deleteState(Frogger* frogger){
+	switch(frogger->estado){
+	case MAIN_MENU:
+		deleteMainMenu((MainMenu*)frogger->state);
+		break;
+	case GAME:
+		deleteGame((Game*)frogger->state);
+		break;
+	default:
+		break;
+	}
+}
 
 void changeState(Frogger* frogger, State newSate){
-	//deleteState(frogger);
+	deleteState(frogger);
 
 	frogger->estado = newSate;
 	switch(frogger->estado){
@@ -155,30 +171,18 @@ void updateState(Frogger* frogger){
 	switch(frogger->estado){
 	case MAIN_MENU:
 		if(((MainMenu*)frogger->state)->done){
-			if((*(MainMenu*)frogger->state).mousePlay){
+			if(((MainMenu*)frogger->state)->mousePlay){
 				changeState(frogger,GAME);
 			}
-			if((*(MainMenu*)frogger->state).mouseExit){
+			else if(((MainMenu*)frogger->state)->mouseExit){
 				frogger->complete = 1;
 			}
 		}
 		break;
 	case GAME:
 		if(((Game*)frogger->state)->done){
-			frogger->complete = 1;
+			changeState(frogger,MAIN_MENU);
 		}
-		break;
-	default:
-		break;
-	}
-}
-void deleteState(Frogger* frogger){
-	switch(frogger->estado){
-	case MAIN_MENU:
-		deleteMainMenu((MainMenu*)frogger->state);
-		break;
-	case GAME:
-		deleteGame((Game*)frogger->state);
 		break;
 	default:
 		break;

@@ -16,16 +16,19 @@ typedef struct{
 	int ticked;
 }Timer;
 
+
+void newTimer();
+void timerHandler();
+void resetTimerFlag();
+void deleteTimer();
+Timer* getTimer();
+
 /**
  * @brief Subscribes and enables Timer 0 interrupts
  *
  * @return Returns bit order in interrupt mask; negative value on failure
  */
 
-Timer * newTimer();
-void timerHandler(Timer * timer);
-void resetTimerFlag(Timer* timer);
-void deleteTimer(Timer * timer);
 
 int subscribe_timer(void );
 

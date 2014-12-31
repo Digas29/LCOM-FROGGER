@@ -1,6 +1,8 @@
 #include "game.h"
 #include "frogger.h"
 #include "keyboard.h"
+#include "RTC.h"
+#include "mouse.h"
 #include "car.h"
 #include "log.h"
 #include "turtles.h"
@@ -21,6 +23,7 @@ Game* newGame(){
 	jogo->tartarugas2 = loadBitmap("/home/proj/res/turtle_2_sprites.bmp");
 	jogo->tartarugas3 = loadBitmap("/home/proj/res/turtle_3_sprites.bmp");
 	jogo->toca = loadBitmap("/home/proj/res/toca.bmp");
+	jogo->vidas = loadBitmap("/home/proj/res/lives.bmp");
 
 	jogo->frog = newFrog();
 	int i;
@@ -30,71 +33,91 @@ Game* newGame(){
 
 
 	jogo->lane1 = (Lane*)malloc(sizeof(Lane));
+	jogo->lane1->size = 0;
 	jogo->lane2 = (Lane*)malloc(sizeof(Lane));
+	jogo->lane2->size = 0;
 	jogo->lane3 = (Lane*)malloc(sizeof(Lane));
+	jogo->lane3->size = 0;
 	jogo->lane4 = (Lane*)malloc(sizeof(Lane));
+	jogo->lane4->size = 0;
 	jogo->lane5 = (Lane*)malloc(sizeof(Lane));
+	jogo->lane5->size = 0;
 	jogo->river1 = (RiverT*)malloc(sizeof(RiverT));
+	jogo->river1->size = 0;
 	jogo->river2 = (River*)malloc(sizeof(River));
+	jogo->river2->size = 0;
 	jogo->river3 = (River*)malloc(sizeof(River));
+	jogo->river3->size = 0;
 	jogo->river4 = (RiverT*)malloc(sizeof(RiverT));
+	jogo->river4->size = 0;
 	jogo->river5 = (River*)malloc(sizeof(River));
+	jogo->river5->size = 0;
 
 	srand(time(NULL));
 
-	jogo->lane1->cars[0] = newCar(1);
-	jogo->lane1->cars[1] = newCar(1);
-	jogo->lane1->size = 2;
+	addCar(jogo->lane1,1);
+	addCar(jogo->lane1,1);
 
-	jogo->lane2->cars[0] = newCar(2);
-	jogo->lane2->cars[1] = newCar(2);
-	jogo->lane2->cars[2] = newCar(2);
-	jogo->lane2->size = 3;
+	addCar(jogo->lane2,2);
+	addCar(jogo->lane2,2);
+	addCar(jogo->lane2,2);
 
-	jogo->lane3->cars[0] = newCar(3);
-	jogo->lane3->cars[1] = newCar(3);
-	jogo->lane3->size = 2;
+	addCar(jogo->lane3,3);
+	addCar(jogo->lane3,3);
 
-	jogo->lane4->cars[0] = newCar(4);
-	jogo->lane4->cars[1] = newCar(4);
-	jogo->lane4->cars[2] = newCar(4);
-	jogo->lane4->size = 3;
+	addCar(jogo->lane4,4);
+	addCar(jogo->lane4,4);
+	addCar(jogo->lane4,4);
 
-	jogo->lane5->cars[0] = newCar(5);
-	jogo->lane5->cars[1] = newCar(5);
-	jogo->lane5->size = 2;
+	addCar(jogo->lane5,5);
+	addCar(jogo->lane5,5);
 
-	jogo->river1->t[0] = newTurtle(1);
-	jogo->river1->t[1] = newTurtle(1);
-	jogo->river1->size = 2;
+	addTurtles(jogo->river1, 1);
+	addTurtles(jogo->river1, 1);
 
-	jogo->river2->logs[0] = newLog(2);
-	jogo->river2->logs[1] = newLog(2);
-	jogo->river2->size = 2;
+	addLog(jogo->river2,2);
+	addLog(jogo->river2,2);
 
-	jogo->river3->logs[0] = newLog(3);
-	jogo->river3->logs[1] = newLog(3);
-	jogo->river3->size = 2;
+	addLog(jogo->river3,3);
+	addLog(jogo->river3,3);
 
-	jogo->river4->t[0] = newTurtle(4);
-	jogo->river4->t[1] = newTurtle(4);
-	jogo->river4->t[2] = newTurtle(4);
-	jogo->river4->size = 3;
+	addTurtles(jogo->river4, 4);
+	addTurtles(jogo->river4, 4);
+	addTurtles(jogo->river4, 4);
 
-	jogo->river5->logs[0] = newLog(5);
-	jogo->river5->logs[1] = newLog(5);
-	jogo->river5->size = 2;
+	addLog(jogo->river5,5);
+	addLog(jogo->river5,5);
 
 	jogo->level = 1;
 	jogo->lives = 3;
+	jogo->pontos = 0;
 
+	jogo->pause = 0;
 	jogo->gameover = 0;
 	jogo->done = 0;
+
+	programDeltaAlarm(0,0,10);
 	return jogo;
 }
 void updateGame(Game* game, unsigned long scanCode){
-	if(scanCode == KEY_ESC){
+	switch(scanCode){
+	case KEY_ESC:
 		game->done = 1;
+		break;
+	case KEY_P:
+		if(game->pause){
+			game->pause = 0;
+		}
+		else{
+			game->pause = 1;
+		}
+	}
+	if(game->pause){
+		return;
+	}
+	if(game->gameover == 3){
+		game->done = 1;
+		return;
 	}
 	updateFrog(game->frog, scanCode);
 	if(!game->frog->dead){
@@ -172,6 +195,7 @@ void updateGame(Game* game, unsigned long scanCode){
 				if(game->frog->vy == 0){
 					game->frog->swamp = 1;
 					game->sapos[collision] = 1;
+					game->pontos += 100 * game->level;
 				}
 				collision = 0;
 			}
@@ -186,6 +210,20 @@ void updateGame(Game* game, unsigned long scanCode){
 				game->gameover = 1;
 			}
 			game->frog->dir = 5;
+		}
+
+		int levelup = 1;
+		for(i = 0; i < 5; i++){
+			if(game->sapos[i] == 0){
+				levelup = 0;
+				break;
+			}
+		}
+		if(levelup){
+			game->level++;
+			for(i = 0; i < 5; i++){
+				game->sapos[i] = 0;
+			}
 		}
 	}
 }
@@ -229,9 +267,52 @@ void drawGame(Game* game){
 	}
 
 	drawFrog(game->frog);
-	drawString("vidas", 0, 0, RGB888toRGB565(0,255,0));
+	drawString("lives", 0.05*get_h_res(), 0.0125*get_h_res(), green);
+	drawString("points", 0.05*get_h_res(), 0.1125*get_h_res(), green);
+	drawString("level", 0.85*get_h_res(), 0.0125*get_h_res(), green);
+
+	int x = 0.05*get_h_res();
+	for(i = 0; i < game->lives;i++){
+		drawBitmapT(game->vidas, x,  0.0625 * get_h_res(), ALIGN_LEFT);
+		x += 0.0375*get_h_res();
+	}
+
+	char string[15];
+
+	sprintf(string, "%d", game->pontos);
+	drawString(string, 0.05*get_h_res(), 0.1625*get_h_res(), green);
+
+	sprintf(string, "%d", game->level);
+	drawString(string, 0.85*get_h_res(), 0.0625 * get_h_res(), green);
+	if(game->pause){
+		drawString("pause", 0.45*get_h_res(), 0.45*get_v_res(), green);
+	}
+
+	if(game->gameover){
+		drawString("game over", 0.45*get_h_res(), 0.45*get_v_res(), green);
+	}
+
 }
 void deleteGame(Game* game){
+	deleteBitmap(game->fundo);
+	deleteBitmap(game->carros);
+	deleteBitmap(game->troncos);
+	deleteBitmap(game->camiao);
+	deleteBitmap(game->tartarugas2);
+	deleteBitmap(game->tartarugas3);
+	deleteBitmap(game->toca);
+	deleteBitmap(game->vidas);
+	deleteFrog(game->frog);
+	free(game->lane1);
+	free(game->lane2);
+	free(game->lane3);
+	free(game->lane4);
+	free(game->lane5);
+	free(game->river1);
+	free(game->river2);
+	free(game->river3);
+	free(game->river4);
+	free(game->river5);
 	free(game);
 }
 
@@ -268,9 +349,10 @@ void updateFrog(Frog* sapo,unsigned long scanCode){
 			sapo->dir = 7;
 			return;
 		case 7:
+			sapo->anim = 0;
 			sapo->faixa = 0;
-			sapo->x = 0.475*get_h_res();
 			sapo->dir = 1;
+			sapo->x = 0.475*get_h_res();
 			sapo->y = 0.7*get_h_res();
 			sapo->dead = 0;
 			sapo->vy = 0;
@@ -280,10 +362,34 @@ void updateFrog(Frog* sapo,unsigned long scanCode){
 			break;
 		}
 	}
+	if(getMouse()->leftButtonDown){
+		if(!(getMouse()->x >= sapo->x && getMouse()->x <= sapo->x + 0.05*get_h_res() &&
+				getMouse()->y >= sapo->y && getMouse()->y <= sapo->y + 0.05*get_h_res())) {
+			int deltax = sapo->x + 0.025*get_h_res() - getMouse()->x;
+			int deltay = sapo->y + 0.025*get_h_res() - getMouse()->y;
+			if(abs(deltax) > abs(deltay)){
+				if(deltax < 0){
+					scanCode = KEY_ARR_RIGHT;
+				}
+				else{
+					scanCode = KEY_ARR_LEFT;
+				}
+			}
+			else{
+				if(deltay < 0){
+					scanCode = KEY_ARR_DOWN;
+				}
+				else{
+					scanCode = KEY_ARR_UP;
+				}
+			}
+		}
+	}
 
 	if((sapo->vx == 0 && sapo->vy == 0) || (sapo->faixa >= 7 && abs(sapo->vx) == (int)(40/getFPS() * 2))){
 		switch(scanCode){
-		case KEY_W:
+		case KEY_ARR_UP:
+		case KEY_W :
 			sapo->vx = 0;
 			sapo->newX = 0;
 			sapo->dir = 1;
@@ -297,6 +403,7 @@ void updateFrog(Frog* sapo,unsigned long scanCode){
 				sapo->faixa++;
 			}
 			break;
+		case KEY_ARR_DOWN:
 		case KEY_S:
 			sapo->vx = 0;
 			sapo->newX = 0;
@@ -311,6 +418,7 @@ void updateFrog(Frog* sapo,unsigned long scanCode){
 				sapo->faixa--;
 			}
 			break;
+		case KEY_ARR_RIGHT:
 		case KEY_D:
 			sapo->vy = 0;
 			sapo->newX = 0;
@@ -324,6 +432,7 @@ void updateFrog(Frog* sapo,unsigned long scanCode){
 				sapo->vx = 5;
 			}
 			break;
+		case KEY_ARR_LEFT:
 		case KEY_A:
 			sapo->vy = 0;
 			sapo->newX = 0;
@@ -438,7 +547,7 @@ void drawFrog(Frog* sapo){
 		case 6:
 			imgStartPos += (drawWidth * 2) * 9;
 			break;
-		case 8:
+		case 7:
 			imgStartPos += (drawWidth * 2) * 10;
 			break;
 		default:
@@ -461,14 +570,15 @@ void drawFrog(Frog* sapo){
 	}
 }
 void deleteFrog(Frog* sapo){
+	deleteBitmap(sapo->img);
 	free(sapo);
 }
 
 int checkLaneCollisions(Frog * frog, Lane* lane){
 	int i;
 	for(i = 0;i < lane->size; i++){
-		if(!(frog->x + 26 < lane->cars[i]->x || frog->x > lane->cars[i]->x + 26 ||
-				frog->y + 26 < lane->cars[i]->y || frog->y > lane->cars[i]->y + 26))
+		if(!(frog->x + 0.035*get_h_res() < lane->cars[i]->x || frog->x > lane->cars[i]->x + 0.035*get_h_res() ||
+				frog->y + 0.035*get_h_res() < lane->cars[i]->y || frog->y > lane->cars[i]->y + 0.035*get_h_res()))
 			return 1;
 	}
 	return 0;
@@ -479,8 +589,8 @@ int checkRiverCollisions(Frog * frog, River* river){
 	}
 	int i;
 	for(i = 0;i < river->size; i++){
-		if(!(frog->x + 26 < river->logs[i]->x || frog->x + 26 > river->logs[i]->x + river->logs[i]->width ||
-				frog->y + 26 < river->logs[i]->y || frog->y > river->logs[i]->y + 26)){
+		if(!(frog->x + 0.035*get_h_res() < river->logs[i]->x || frog->x + 0.035*get_h_res() > river->logs[i]->x + river->logs[i]->width ||
+				frog->y + 0.035*get_h_res() < river->logs[i]->y || frog->y > river->logs[i]->y + 0.035*get_h_res())){
 			if(frog->vx == 0 && frog->vy == 0){
 				frog->vx = river->logs[i]->vx;
 				if(frog->vx < 0){
@@ -502,8 +612,8 @@ int checkRiverTCollisions(Frog * frog, RiverT* river){
 	}
 	int i;
 	for(i = 0;i < river->size; i++){
-		if(!(frog->x + 26 < river->t[i]->x || frog->x + 26 > river->t[i]->x + river->t[i]->width ||
-				frog->y + 26 < river->t[i]->y || frog->y > river->t[i]->y + 26)){
+		if(!(frog->x + 0.035*get_h_res() < river->t[i]->x || frog->x + 0.035*get_h_res() > river->t[i]->x + river->t[i]->width ||
+				frog->y + 0.035*get_h_res() < river->t[i]->y || frog->y > river->t[i]->y + 0.035*get_h_res())){
 			if(frog->vx == 0 && frog->vy == 0){
 				frog->vx = river->t[i]->vx;
 				if(frog->vx < 0){
@@ -511,6 +621,11 @@ int checkRiverTCollisions(Frog * frog, RiverT* river){
 				}
 				if(frog->vx > 0){
 					frog->newX = 0.75*get_h_res();
+				}
+			}
+			if(river->t[i]->anim){
+				if(river->t[i]->desenho == 3){
+					return 1;
 				}
 			}
 			return 0;
@@ -534,4 +649,87 @@ int checkSwampCollision(Frog * frog){
 	if(!(frog->x < 0.7125*get_h_res() || frog->x + 0.05*get_h_res() > 0.78125*get_h_res()))
 		return 4;
 	return -1;
+}
+
+void addCar(Lane* lane, int faixa){
+
+	if(lane->size == laneMaxSize){
+		return;
+	}
+	int i;
+	int colision = 0;
+	Car* car = newCar(faixa);
+
+	while(1){
+		for(i=0; i < lane->size; i++){
+			if(car->x >= lane->cars[i]->x - 0.05*get_h_res() && car->x <= lane->cars[i]->x + 0.1*get_h_res()){
+				colision = 1 ;
+				break;
+			}
+		}
+		if(!colision){
+			lane->cars[lane->size] = car;
+			lane->size++;
+			break;
+		}
+		deleteCar(car);
+		car = newCar(faixa);
+		colision = 0;
+	}
+}
+
+void addLog(River* river, int faixa){
+
+	if(river->size == riverMaxSize){
+		return;
+	}
+	int i;
+	int colision = 0;
+	Log* log = newLog(faixa);
+
+	while(1){
+		for(i=0; i < river->size; i++){
+			if(log->x + log->width  >= river->logs[i]->x - 0.05*get_h_res() &&
+					log->x <= river->logs[i]->x + river->logs[i]->width + 0.05*get_h_res()){
+				colision = 1 ;
+				break;
+			}
+		}
+		if(!colision){
+			river->logs[river->size] = log;
+			river->size++;
+			break;
+		}
+		deleteLog(log);
+		log = newLog(faixa);
+		colision = 0;
+	}
+}
+
+void addTurtles(RiverT* river, int faixa){
+
+	if(river->size == riverMaxSize){
+		return;
+	}
+	int i;
+	int colision = 0;
+	Turtles* turtle = newTurtle(faixa);
+
+	while(1){
+		for(i=0; i < river->size; i++){
+			if(turtle->x + turtle->width  >= river->t[i]->x - 0.05*get_h_res() &&
+					turtle->x <= river->t[i]->x + river->t[i]->width + 0.05*get_h_res()){
+				colision = 1 ;
+				break;
+			}
+		}
+		if(!colision){
+			river->t[river->size] = turtle;
+			river->size++;
+			break;
+		}
+		deleteTurtle(turtle);
+		turtle = newTurtle(faixa);
+		colision = 0;
+	}
 }
