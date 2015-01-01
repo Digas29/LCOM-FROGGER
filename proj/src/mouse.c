@@ -2,6 +2,7 @@
 #include <minix/syslib.h>
 #include <minix/drivers.h>
 #include "mouse.h"
+#include "path.h"
 #include "bitmap.h"
 
 unsigned int hookID;
@@ -25,7 +26,7 @@ void newMouse(){
 	mouse->middleButtonReleased = 0;
 	mouse->rightButtonReleased = 0;
 
-	mouse->cursor = loadBitmap("/home/proj/res/cursor.bmp");
+	mouse->cursor = loadBitmap(getPath("cursor.bmp"));
 
 	mouse->update = 0;
 	mouse->draw = 1;

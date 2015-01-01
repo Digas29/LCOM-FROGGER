@@ -1,5 +1,7 @@
 #include "MainMenu.h"
+#include "rectangle.h"
 #include "mouse.h"
+#include "path.h"
 #include "graphics.h"
 #include "colors.h"
 #include "strings.h"
@@ -8,27 +10,16 @@ MainMenu* newMainMenu(){
 	MainMenu* menu = (MainMenu *) malloc(sizeof(MainMenu));
 
 	menu->done = 0;
-	menu->fundo = loadBitmap("/home/proj/res/frogger.bmp");
+	menu->fundo = loadBitmap(getPath("frogger.bmp"));
 	menu->mousePlay = 0;
-	menu->playButton = newRec(256,216,544,252);
+	menu->playButton = newRec(0.32*get_h_res(),0.27*get_h_res(),0.68*get_h_res(),0.315*get_h_res());
 	menu->mouseHighScores = 0;
-	menu->highScoresButton = newRec(256,286,544,322);
+	menu->highScoresButton = newRec(0.32*get_h_res(),0.3575*get_h_res(),0.68*get_h_res(),0.4025*get_h_res());
 	menu->mouseSettings = 0;
-	menu->settingsButton = newRec(256,356,544,392);
+	menu->settingsButton = newRec(0.32*get_h_res(),0.445*get_h_res(),0.68*get_h_res(),0.49*get_h_res());
 	menu->mouseExit = 0;
-	menu->exitButton = newRec(256,426,544,462);
-
+	menu->exitButton = newRec(0.32*get_h_res(),0.5325*get_h_res(),0.68*get_h_res(),0.5775*get_h_res());
 	return menu;
-}
-int mouseInsideRec(Rec* rect){
-	if(getMouse()->x >= rect->xi &&
-			getMouse()->x <= rect->xf &&
-			getMouse()->y >= rect->yi &&
-			getMouse()->y <= rect->yf){
-  		return 1;
-	}
-	else
-		return 0;
 }
 
 void updateMainMenu(MainMenu* menu, unsigned long scanCode){
@@ -42,6 +33,10 @@ void updateMainMenu(MainMenu* menu, unsigned long scanCode){
 			menu->mouseHighScores = 1;
 			menu->done = 1;
 		}
+		else if(mouseInsideRec(menu->settingsButton)){
+			menu->mouseSettings = 1;
+			menu->done = 1;
+		}
 		else if(mouseInsideRec(menu->exitButton)){
 			menu->mouseExit = 1;
 			menu->done = 1;
@@ -51,7 +46,6 @@ void updateMainMenu(MainMenu* menu, unsigned long scanCode){
 
 void drawMainMenu(MainMenu* menu){
 	drawBitmap(menu->fundo,0,0,ALIGN_LEFT);
-
 	if(mouseInsideRec(menu->playButton)){
 		drawString("play", 0.45*get_h_res(), 0.27 *get_h_res(), RGB888toRGB565(255,255,0));
 	}

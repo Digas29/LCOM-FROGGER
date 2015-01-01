@@ -5,8 +5,10 @@
 #include "frogger.h"
 #include "timer.h"
 #include "bitmap.h"
+#include "path.h"
 #include "game.h"
 #include "strings.h"
+#include "settings.h"
 #include "RTC.h"
 
 const int FRAMES_PER_SECOND = 30;
@@ -101,6 +103,9 @@ void updateFrogger(Frogger* frogger){
 				updateGame(frogger->state, frogger->scanCode);
 			}
 			break;
+		case SETTINGS:
+			updateSettingsMenu(frogger->state, frogger->scanCode);
+			break;
 		default:
 			break;
 		}
@@ -117,6 +122,9 @@ void drawFrogger(Frogger* frogger){
 		}
 		if(frogger->estado == GAME){
 			drawGame((Game*)frogger->state);
+		}
+		if(frogger->estado == SETTINGS){
+			drawSettingsMenu((SettingsMenu*)frogger->state);
 		}
 		frogger->up = 0;
 	}
@@ -146,6 +154,8 @@ void deleteState(Frogger* frogger){
 	case GAME:
 		deleteGame((Game*)frogger->state);
 		break;
+	case SETTINGS:
+		deleteSettingsMenu((SettingsMenu*)frogger->state);
 	default:
 		break;
 	}
@@ -153,6 +163,7 @@ void deleteState(Frogger* frogger){
 
 void changeState(Frogger* frogger, State newSate){
 	deleteState(frogger);
+
 
 	frogger->estado = newSate;
 	switch(frogger->estado){
@@ -162,6 +173,8 @@ void changeState(Frogger* frogger, State newSate){
 	case GAME:
 		frogger->state = newGame();
 		break;
+	case SETTINGS:
+		frogger->state = newSettingsMenu();
 	default:
 		break;
 	}
@@ -172,9 +185,15 @@ void updateState(Frogger* frogger){
 	case MAIN_MENU:
 		if(((MainMenu*)frogger->state)->done){
 			if(((MainMenu*)frogger->state)->mousePlay){
+				getMouse()->leftButtonDown = 0;
 				changeState(frogger,GAME);
 			}
+			else if(((MainMenu*)frogger->state)->mouseSettings){
+				getMouse()->leftButtonDown = 0;
+				changeState(frogger, SETTINGS);
+			}
 			else if(((MainMenu*)frogger->state)->mouseExit){
+				getMouse()->leftButtonDown = 0;
 				frogger->complete = 1;
 			}
 		}
@@ -182,6 +201,36 @@ void updateState(Frogger* frogger){
 	case GAME:
 		if(((Game*)frogger->state)->done){
 			changeState(frogger,MAIN_MENU);
+		}
+		break;
+	case SETTINGS:
+		if(((SettingsMenu*)frogger->state)->done){
+			if(((SettingsMenu*)frogger->state)->mode114){
+				if(get_h_res() != 800){
+					vg_exit();
+					vg_init(0x114);
+					deleteSettingsMenu((SettingsMenu*)frogger->state);
+					frogger->state = newSettingsMenu();
+				}
+				((SettingsMenu*)frogger->state)->done = 0;
+				((SettingsMenu*)frogger->state)->mode114 = 0;
+				getMouse()->leftButtonDown = 0;
+ 	 		}
+	  		else if(((SettingsMenu*)frogger->state)->mode117){
+				if(get_h_res() != 1024){
+					vg_exit();
+					vg_init(0x117);
+					deleteSettingsMenu((SettingsMenu*)frogger->state);
+					frogger->state = newSettingsMenu();
+				}
+				((SettingsMenu*)frogger->state)->done = 0;
+				((SettingsMenu*)frogger->state)->mode117 = 0;
+				getMouse()->leftButtonDown = 0;
+			}
+			else if(((SettingsMenu*)frogger->state)->mouseExit){
+				getMouse()->leftButtonDown = 0;
+				changeState(frogger,MAIN_MENU);
+			}
 		}
 		break;
 	default:
