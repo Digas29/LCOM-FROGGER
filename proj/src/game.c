@@ -5,6 +5,7 @@
 #include "mouse.h"
 #include "car.h"
 #include "log.h"
+#include "path.h"
 #include "turtles.h"
 #include "strings.h"
 #include "colors.h"
@@ -16,14 +17,14 @@
 Game* newGame(){
 	Game * jogo = (Game*) malloc(sizeof(Game));
 
-	jogo->fundo = loadBitmap("/home/proj/res/test.bmp");
-	jogo->carros = loadBitmap("/home/proj/res/car_sprites.bmp");
-	jogo->troncos = loadBitmap("/home/proj/res/logs.bmp");
-	jogo->camiao = loadBitmap("/home/proj/res/truck.bmp");
-	jogo->tartarugas2 = loadBitmap("/home/proj/res/turtle_2_sprites.bmp");
-	jogo->tartarugas3 = loadBitmap("/home/proj/res/turtle_3_sprites.bmp");
-	jogo->toca = loadBitmap("/home/proj/res/toca.bmp");
-	jogo->vidas = loadBitmap("/home/proj/res/lives.bmp");
+	jogo->fundo = loadBitmap(getPath("test.bmp"));
+	jogo->carros = loadBitmap(getPath("car_sprites.bmp"));
+	jogo->troncos = loadBitmap(getPath("logs.bmp"));
+	jogo->camiao = loadBitmap(getPath("truck.bmp"));
+	jogo->tartarugas2 = loadBitmap(getPath("turtle_2_sprites.bmp"));
+	jogo->tartarugas3 = loadBitmap(getPath("turtle_3_sprites.bmp"));
+	jogo->toca = loadBitmap(getPath("toca.bmp"));
+	jogo->vidas = loadBitmap(getPath("lives.bmp"));
 
 	jogo->frog = newFrog();
 	int i;
@@ -96,21 +97,23 @@ Game* newGame(){
 	jogo->gameover = 0;
 	jogo->done = 0;
 
-	programDeltaAlarm(0,0,10);
+	programDeltaAlarm(0,1,0);
 	return jogo;
 }
 void updateGame(Game* game, unsigned long scanCode){
+
 	switch(scanCode){
 	case KEY_ESC:
 		game->done = 1;
 		break;
 	case KEY_P:
-		if(game->pause){
-			game->pause = 0;
-		}
-		else{
-			game->pause = 1;
-		}
+		game->pause = 1;
+		break;
+	case KEY_SPACE:
+		game->pause = 0;
+		break;
+	default:
+		break;
 	}
 	if(game->pause){
 		return;
@@ -291,7 +294,6 @@ void drawGame(Game* game){
 	if(game->gameover){
 		drawString("game over", 0.45*get_h_res(), 0.45*get_v_res(), green);
 	}
-
 }
 void deleteGame(Game* game){
 	deleteBitmap(game->fundo);
@@ -319,7 +321,7 @@ void deleteGame(Game* game){
 Frog* newFrog(){
 	Frog * sapo = (Frog*) malloc(sizeof(Frog));
 
-	sapo->img = loadBitmap("/home/proj/res/frog_sprites.bmp");
+	sapo->img = loadBitmap(getPath("frog_sprites.bmp"));
 	sapo->dir = 1;
 	sapo->anim = 0;
 
@@ -728,7 +730,7 @@ void addTurtles(RiverT* river, int faixa){
 			river->size++;
 			break;
 		}
-		deleteTurtle(turtle);
+	 	deleteTurtle(turtle);
 		turtle = newTurtle(faixa);
 		colision = 0;
 	}

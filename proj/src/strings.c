@@ -1,6 +1,7 @@
 #include "strings.h"
 #include "graphics.h"
 #include "colors.h"
+#include "path.h"
 #include "bitmap.h"
 
 Alphabet * letters = NULL;
@@ -9,42 +10,42 @@ int nextX;
 void newAlphabet(){
 	Alphabet * a = (Alphabet *)malloc(sizeof(Alphabet));
 
-	a->A = loadBitmap("/home/proj/res/letras/A.bmp");
-	a->B = loadBitmap("/home/proj/res/letras/B.bmp");
-	a->C1 = loadBitmap("/home/proj/res/letras/C.bmp");
-	a->D1 = loadBitmap("/home/proj/res/letras/D.bmp");
-	a->E = loadBitmap("/home/proj/res/letras/E.bmp");
-	a->F = loadBitmap("/home/proj/res/letras/F.bmp");
-	a->G = loadBitmap("/home/proj/res/letras/G.bmp");
-	a->H = loadBitmap("/home/proj/res/letras/H.bmp");
-	a->I = loadBitmap("/home/proj/res/letras/I.bmp");
-	a->J = loadBitmap("/home/proj/res/letras/J.bmp");
-	a->K = loadBitmap("/home/proj/res/letras/K.bmp");
-	a->L = loadBitmap("/home/proj/res/letras/L.bmp");
-	a->M = loadBitmap("/home/proj/res/letras/M.bmp");
-	a->N = loadBitmap("/home/proj/res/letras/N.bmp");
-	a->O = loadBitmap("/home/proj/res/letras/O.bmp");
-	a->P = loadBitmap("/home/proj/res/letras/P.bmp");
-	a->Q = loadBitmap("/home/proj/res/letras/Q.bmp");
-	a->R = loadBitmap("/home/proj/res/letras/R.bmp");
-	a->S1 = loadBitmap("/home/proj/res/letras/S.bmp");
-	a->T1 = loadBitmap("/home/proj/res/letras/T.bmp");
-	a->U = loadBitmap("/home/proj/res/letras/U.bmp");
-	a->V = loadBitmap("/home/proj/res/letras/V.bmp");
-	a->W = loadBitmap("/home/proj/res/letras/W.bmp");
-	a->X = loadBitmap("/home/proj/res/letras/X.bmp");
-	a->Y = loadBitmap("/home/proj/res/letras/Y.bmp");
-	a->Z = loadBitmap("/home/proj/res/letras/Z.bmp");
-	a->d0 = loadBitmap("/home/proj/res/letras/0.bmp");
-	a->d1 = loadBitmap("/home/proj/res/letras/1.bmp");
-	a->d2 = loadBitmap("/home/proj/res/letras/2.bmp");
-	a->d3 = loadBitmap("/home/proj/res/letras/3.bmp");
-	a->d4 = loadBitmap("/home/proj/res/letras/4.bmp");
-	a->d5 = loadBitmap("/home/proj/res/letras/5.bmp");
-	a->d6 = loadBitmap("/home/proj/res/letras/6.bmp");
-	a->d7 = loadBitmap("/home/proj/res/letras/7.bmp");
-	a->d8 = loadBitmap("/home/proj/res/letras/8.bmp");
-	a->d9 = loadBitmap("/home/proj/res/letras/9.bmp");
+	a->A = loadBitmap(getPath("letras/A.bmp"));
+	a->B = loadBitmap(getPath("letras/B.bmp"));
+	a->C1 = loadBitmap(getPath("letras/C.bmp"));
+	a->D1 = loadBitmap(getPath("letras/D.bmp"));
+	a->E = loadBitmap(getPath("letras/E.bmp"));
+	a->F = loadBitmap(getPath("letras/F.bmp"));
+	a->G = loadBitmap(getPath("letras/G.bmp"));
+	a->H = loadBitmap(getPath("letras/H.bmp"));
+	a->I = loadBitmap(getPath("letras/I.bmp"));
+	a->J = loadBitmap(getPath("letras/J.bmp"));
+	a->K = loadBitmap(getPath("letras/K.bmp"));
+	a->L = loadBitmap(getPath("letras/L.bmp"));
+	a->M = loadBitmap(getPath("letras/M.bmp"));
+	a->N = loadBitmap(getPath("letras/N.bmp"));
+	a->O = loadBitmap(getPath("letras/O.bmp"));
+	a->P = loadBitmap(getPath("letras/P.bmp"));
+	a->Q = loadBitmap(getPath("letras/Q.bmp"));
+	a->R = loadBitmap(getPath("letras/R.bmp"));
+	a->S1 = loadBitmap(getPath("letras/S.bmp"));
+	a->T1 = loadBitmap(getPath("letras/T.bmp"));
+	a->U = loadBitmap(getPath("letras/U.bmp"));
+	a->V = loadBitmap(getPath("letras/V.bmp"));
+	a->W = loadBitmap(getPath("letras/W.bmp"));
+	a->X = loadBitmap(getPath("letras/X.bmp"));
+	a->Y = loadBitmap(getPath("letras/Y.bmp"));
+	a->Z = loadBitmap(getPath("letras/Z.bmp"));
+	a->d0 = loadBitmap(getPath("letras/0.bmp"));
+	a->d1 = loadBitmap(getPath("letras/1.bmp"));
+	a->d2 = loadBitmap(getPath("letras/2.bmp"));
+	a->d3 = loadBitmap(getPath("letras/3.bmp"));
+	a->d4 = loadBitmap(getPath("letras/4.bmp"));
+	a->d5 = loadBitmap(getPath("letras/5.bmp"));
+	a->d6 = loadBitmap(getPath("letras/6.bmp"));
+	a->d7 = loadBitmap(getPath("letras/7.bmp"));
+	a->d8 = loadBitmap(getPath("letras/8.bmp"));
+	a->d9 = loadBitmap(getPath("letras/9.bmp"));
 
 	letters = a;
 }
