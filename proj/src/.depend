@@ -11,6 +11,7 @@ MainMenu.o:	bitmap.h
 MainMenu.o:	colors.h
 MainMenu.o:	graphics.h
 MainMenu.o:	mouse.h
+MainMenu.o:	path.h
 MainMenu.o:	rectangle.h
 MainMenu.o:	strings.h
 
@@ -154,7 +155,9 @@ frogger.o:	graphics.h
 frogger.o:	keyboard.h
 frogger.o:	log.h
 frogger.o:	mouse.h
+frogger.o:	path.h
 frogger.o:	rectangle.h
+frogger.o:	settings.h
 frogger.o:	strings.h
 frogger.o:	timer.h
 frogger.o:	turtles.h
@@ -179,6 +182,7 @@ game.o:	graphics.h
 game.o:	keyboard.h
 game.o:	log.h
 game.o:	mouse.h
+game.o:	path.h
 game.o:	rectangle.h
 game.o:	strings.h
 game.o:	timer.h
@@ -415,9 +419,45 @@ mouse.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
 mouse.o:	bitmap.h
 mouse.o:	mouse.c
 mouse.o:	mouse.h
+mouse.o:	path.h
 
+path.o:	/usr/include/limits.h
+path.o:	/usr/include/minix/dir.h
+path.o:	/usr/include/minix/limits.h
+path.o:	/usr/include/minix/sys_config.h
+path.o:	/usr/include/minix/types.h
+path.o:	/usr/include/stdint.h
+path.o:	/usr/include/sys/cdefs.h
+path.o:	/usr/include/sys/null.h
+path.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/ansi.h
+path.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/limits.h
+path.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/string.h
+path.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/syslimits.h
+path.o:	graphics.h
+path.o:	path.c
+path.o:	path.h
+
+rectangle.o:	bitmap.h
+rectangle.o:	mouse.h
 rectangle.o:	rectangle.c
 rectangle.o:	rectangle.h
+
+settings.o:	/usr/include/minix/dir.h
+settings.o:	/usr/include/minix/types.h
+settings.o:	/usr/include/sys/null.h
+settings.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/ansi.h
+settings.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stdio.h
+settings.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
+settings.o:	bitmap.h
+settings.o:	colors.h
+settings.o:	graphics.h
+settings.o:	keyboard.h
+settings.o:	mouse.h
+settings.o:	path.h
+settings.o:	rectangle.h
+settings.o:	settings.c
+settings.o:	settings.h
+settings.o:	strings.h
 
 sprite.o:	/usr/include/minix/dir.h
 sprite.o:	/usr/include/minix/types.h
@@ -438,6 +478,7 @@ strings.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
 strings.o:	bitmap.h
 strings.o:	colors.h
 strings.o:	graphics.h
+strings.o:	path.h
 strings.o:	strings.c
 strings.o:	strings.h
 
