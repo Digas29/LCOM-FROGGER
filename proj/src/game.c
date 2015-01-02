@@ -737,7 +737,7 @@ void addCar(Lane* lane, int faixa){
 
 	while(1){
 		for(i=0; i < lane->size; i++){
-			if(car->x >= lane->cars[i]->x - 0.05*get_h_res() && car->x <= lane->cars[i]->x + 0.1*get_h_res()){
+			if(car->x >= lane->cars[i]->x - 0.1*get_h_res() && car->x <= lane->cars[i]->x + 0.1*get_h_res()){
 				colision = 1 ;
 				break;
 			}
