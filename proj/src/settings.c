@@ -26,6 +26,7 @@ SettingsMenu* newSettingsMenu(){
 
 void updateSettingsMenu(SettingsMenu* menu, unsigned long scanCode){
 	if(scanCode == KEY_ESC){
+		menu->mouseExit = 1;
 		menu->done = 1;
 	}
 	Mouse * m = getMouse();
@@ -69,6 +70,7 @@ void drawSettingsMenu(SettingsMenu* menu){
 void deleteSettingsMenu(SettingsMenu* menu){
 	deleteRec(menu->mode114Button);
 	deleteRec(menu->mode117Button);
+	deleteRec(menu->exitButton);
 	deleteBitmap(menu->fundo);
 	free(menu);
 }

@@ -152,6 +152,7 @@ frogger.o:	frogger.c
 frogger.o:	frogger.h
 frogger.o:	game.h
 frogger.o:	graphics.h
+frogger.o:	highscores.h
 frogger.o:	keyboard.h
 frogger.o:	log.h
 frogger.o:	mouse.h
@@ -243,6 +244,23 @@ graphics.o:	graphics.c
 graphics.o:	lmlib.h
 graphics.o:	sprite.h
 graphics.o:	vbe.h
+
+highscores.o:	/usr/include/minix/dir.h
+highscores.o:	/usr/include/minix/types.h
+highscores.o:	/usr/include/sys/null.h
+highscores.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/ansi.h
+highscores.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stdio.h
+highscores.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stdlib.h
+highscores.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
+highscores.o:	bitmap.h
+highscores.o:	colors.h
+highscores.o:	highscores.c
+highscores.o:	highscores.h
+highscores.o:	keyboard.h
+highscores.o:	mouse.h
+highscores.o:	path.h
+highscores.o:	rectangle.h
+highscores.o:	strings.h
 
 keyboard.o:	/usr/include/errno.h
 keyboard.o:	/usr/include/limits.h

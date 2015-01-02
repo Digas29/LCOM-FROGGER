@@ -1,5 +1,6 @@
 #pragma once
 
+
 #define IRQ_RTC 8
 #define BIT(n) (0x01<<(n))
 #define RTC_ADDR_REG 0x70
@@ -32,6 +33,7 @@ int unsubscribe_RTC();
 void wait_valid_rtc(void);
 void RTC_IH();
 void setupRTCInteruptions();
+void stopRTCInteruptions();
 void programDeltaAlarm(int hours, int minutes, int seconds);
 void getDate(unsigned long *day, unsigned long *month, unsigned long *year);
 void getHour(unsigned long *seconds, unsigned long *minutes, unsigned long *hour);

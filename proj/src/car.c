@@ -12,19 +12,19 @@ Car* newCar(int faixa){
 	switch(faixa){
 	case 1:
 		car->y = 0.65*get_h_res();
-		car->vx = -(40/getFPS());
+		car->vx = -(40/getFPS()) *2;
 		break;
 	case 2:
 		car->y = 0.6*get_h_res();
-		car->vx = 40/getFPS();
+		car->vx = 40/getFPS()*2;
 		break;
 	case 3:
 		car->y = 0.55*get_h_res();
-		car->vx = -(40/getFPS());
+		car->vx = -(40/getFPS())*2;
 		break;
 	case 4:
 		car->y = 0.50*get_h_res();
-		car->vx = 40/getFPS();
+		car->vx = 40/getFPS()*2;
 		break;
 	case 5:
 		car->y = 0.45*get_h_res();

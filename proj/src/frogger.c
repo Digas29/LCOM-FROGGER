@@ -1,4 +1,5 @@
 #include <minix/drivers.h>
+#include <stdlib.h>
 #include "graphics.h"
 #include "keyboard.h"
 #include "mouse.h"
@@ -10,16 +11,18 @@
 #include "strings.h"
 #include "settings.h"
 #include "RTC.h"
+#include "highscores.h"
 
 const int FRAMES_PER_SECOND = 30;
 const int mouse_multiplier = 2;
+
+
 
 const int getFPS(){
 	return FRAMES_PER_SECOND;
 }
 
 Frogger* newFrogger(){
-
 	//alocar espaco em memoria
 	Frogger* frogger = (Frogger*)malloc(sizeof(frogger));
 
@@ -27,21 +30,24 @@ Frogger* newFrogger(){
 	frogger->IRQ_KB = subscribe_kbd();
 	frogger->IRQ_TIMER = subscribe_timer();
 	frogger->IRQ_M = subscribe_mouse();
+
 	frogger->IRQ_R = subscribe_RTC();
 
 	frogger->estado = MAIN_MENU;
 	frogger->state = newMainMenu();
+
 	frogger->draw = 1;
 
 	frogger->up = 0;
 
-	setupRTCInteruptions();
+
 	newMouse();
 	newTimer();
 	newAlphabet();
+	newRecords();
+	loadRecords();
 
 	frogger->complete = 0;
-	frogger->refresh = 1;
 	frogger->scanCode = 0;
 	return frogger;
 }
@@ -99,12 +105,21 @@ void updateFrogger(Frogger* frogger){
 					}
 				}
 			}
+			else if(((Game*)frogger->state)->alarm){
+				if(getTimer()->counter % 30 == 0){
+					updateGame(frogger->state, frogger->scanCode);
+					((Game*)frogger->state)->alarm++;
+				}
+			}
 			else{
 				updateGame(frogger->state, frogger->scanCode);
 			}
 			break;
 		case SETTINGS:
 			updateSettingsMenu(frogger->state, frogger->scanCode);
+			break;
+		case HIGHSCORES_MENU:
+			updateHighScoresMenu(frogger->state, frogger->scanCode);
 			break;
 		default:
 			break;
@@ -126,6 +141,9 @@ void drawFrogger(Frogger* frogger){
 		if(frogger->estado == SETTINGS){
 			drawSettingsMenu((SettingsMenu*)frogger->state);
 		}
+		if(frogger->estado == HIGHSCORES_MENU){
+			drawHighScoresMenu((HighScoresMenu*)frogger->state);
+		}
 		frogger->up = 0;
 	}
 	flipMouseBuffer();
@@ -140,7 +158,7 @@ void deleteFrogger(Frogger* frogger){
 	//cancelar subscricoes
 
 	unsubscribe_kbd();
-	//unsubscribe_mouse();
+	unsubscribe_mouse();
 	unsubscribe_timer();
 
 
@@ -156,6 +174,10 @@ void deleteState(Frogger* frogger){
 		break;
 	case SETTINGS:
 		deleteSettingsMenu((SettingsMenu*)frogger->state);
+		break;
+	case HIGHSCORES_MENU:
+		deleteHighScoresMenu((HighScoresMenu*)frogger->state);
+		break;
 	default:
 		break;
 	}
@@ -163,7 +185,6 @@ void deleteState(Frogger* frogger){
 
 void changeState(Frogger* frogger, State newSate){
 	deleteState(frogger);
-
 
 	frogger->estado = newSate;
 	switch(frogger->estado){
@@ -175,10 +196,14 @@ void changeState(Frogger* frogger, State newSate){
 		break;
 	case SETTINGS:
 		frogger->state = newSettingsMenu();
+		break;
+	case HIGHSCORES_MENU:
+		frogger->state = newHighScoresMenu();
+		break;
 	default:
 		break;
 	}
-}
+ }
 
 void updateState(Frogger* frogger){
 	switch(frogger->estado){
@@ -191,6 +216,10 @@ void updateState(Frogger* frogger){
 			else if(((MainMenu*)frogger->state)->mouseSettings){
 				getMouse()->leftButtonDown = 0;
 				changeState(frogger, SETTINGS);
+			}
+			else if(((MainMenu*)frogger->state)->mouseHighScores){
+				getMouse()->leftButtonDown = 0;
+				changeState(frogger, HIGHSCORES_MENU);
 			}
 			else if(((MainMenu*)frogger->state)->mouseExit){
 				getMouse()->leftButtonDown = 0;
@@ -231,6 +260,12 @@ void updateState(Frogger* frogger){
 				getMouse()->leftButtonDown = 0;
 				changeState(frogger,MAIN_MENU);
 			}
+		}
+		break;
+	case HIGHSCORES_MENU:
+		if(((HighScoresMenu*)frogger->state)->mouseExit){
+			getMouse()->leftButtonDown = 0;
+			changeState(frogger,MAIN_MENU);
 		}
 		break;
 	default:
