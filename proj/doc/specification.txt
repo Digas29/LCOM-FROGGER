@@ -1,0 +1,102 @@
+T3G08 - FROGGER FOR MINIX
+
+
+Descri��o
+
+
+Modo Single-Player
+
+O jogador assume o controlo de um sapo que deve atravessar, com tempo limitado, uma estrada movimentada e um rio cheio de obst�culos at� chegar ao seu ninho. A cada cinco travessias bem-sucedidas, o jogo progride de n�vel, aumentando a sua dificuldade (carros mais r�pidos, menos troncos e tartarugas, corrente do rio mais r�pida).
+A estrada movimentada cont�m 4 faixas de rodagem com sentidos intercalados (esquerda para a direita e vice-versa). O sapo deve chegar ao lado oposto da estrada sem ser atropelado por nenhum dos ve�culos que circula nela. Superados estes primeiros obst�culos, o jogador, para alcan�ar o ninho do sapo, ter� de atravessar um rio (onde n�o poder� cair nele) onde a corrente conduz troncos, possibilitando assim a passagem para a outra margem. O rio � compostos por 3 blocos horizontais, sendo que o primeiro e o �ltimo cont�m troncos. No bloco central, a corrente mobiliza tartarugas. Estas s�o mais imprevis�veis que os troncos visto que submergem e emergem ao longo da sua passagem.
+
+  
+Modo Two-Player�s
+
+Os dois jogadores ir�o competir num sistema de pontos, onde o vencedor ganhar� um ponto e o perdedor nada ganhar�. Em caso de empate nenhum dos jogadores recebem pontos.
+Utilizando as mesmas regras do single-player, um jogador para bater o advers�rio deve colocar mais sapos nos ninhos. Os jogadores utilizaram a mesma cena de jogo e poder�o visualizar o sapo do advers�rio no seu computador. Para distinguir os sapos eles ser�o de cores diferentes.
+Caso o tempo de jogo acabe antes de todos os ninhos serem preenchidos, o vencedor � aquele que tiver colocado mais sapos nos ninhos.
+
+
+Perif�ricos
+
+
+O jogo utilizar� os seguintes perif�ricos:
+
+Teclado
+Modo: O teclado ser� utilizado com interrup��es.
+Descri��o: Este dispositivo ser� utilizado para controlar o sapo durante o jogo, ler o nome do utilizador (para gravar no quadro de pontua��es m�ximas caso seja necess�rio). Tamb�m poder� ser utilizado para navega��o entre menus.
+
+Timer/Contador i8254
+Modo: O timer ser� utilizado com interrup��es.
+Descri��o: Ser� utilizado para contar o tempo de respawn dos carros, dos troncos e das tartarugas. Ter� tamb�m um papel fulcral na contagem de frames por segundo.
+
+Rato
+Modo: O rato ser� utilizado com interrup��es.
+Descri��o: Utilizado na navega��o entre menus. Ser� utilizado tamb�m como alternativa ao teclado para movimentar o sapo durante o jogo (ALTERA��O EM RELA��O AO PROJECTO).
+
+Placa de v�deo
+Descri��o: A placa de v�deo ser� utilizada em Modo Gr�fico.
+
+Real Time Clock (RTC)
+Modo: O RTC ser� utilizado com interrup��es.
+Descri��o: Ser� utilizado para saber a data para guardar highscores e para programar um alarme para notificar o utilizador sobre quando o tempo de cada n�vel chegar ao fim.
+
+Porta de S�rie
+Modo: A porta de s�rie ser� utilizada com interrup��es.
+Descri��o: Ser� utilizada para um modo de 2 jogadores. Ser� utilizada para comunicar as posi��es dos sapos e na fase inicial ser� utilizada para sincronizar a mesma cena de jogo.
+M�dulos
+
+
+Rato
+Membro: Jo�o Guarda;
+Descri��o: Subscri��o das interrup��es e cancelamento das mesmas. Fornecer� as coordenadas X e Y do rato assim como se algum bot�o est� a ser premido.
+
+Teclado
+Membro: Ana Amaral;
+Descri��o: Subscri��o das interrup��es e cancelamento das mesmas. Corresponder o make-code a tecla correta, permitindo assim saber qual a tecla que o utilizador est� a premir.
+
+Timer
+Membro: Ana Amaral;
+Descri��o: Subscri��o das interrup��es e cancelamento das mesmas. Fornecer contagens de tempo.
+
+Modo Gr�fico
+Membro: Jo�o Guarda;
+Descri��o: Inicializar o modo gr�fico, ler ficheiros .bmp e testar colis�es e libertar mem�ria das imagens que j� n�o ser�o utilizadas.
+
+RTC
+Membro: Jo�o Guarda;
+Descri��o: Subscri��o das interrup��es e cancelamento das mesmas. Fornece a data atual assim como permitir� o agendamento de alarmes.
+
+Porta de S�rie
+Membro: Jo�o Guarda;
+Descri��o: Subscri��o das interrup��es e cancelamento das mesmas. Estabelecer� um protocolo de comunica��o com outra m�quina.
+
+Motor de Jogo Single-Player
+Membro: Jo�o Guarda;
+Descri��o: Conter� a informa��o relevante sobre o estado do jogo (ex. Posi��o dos carros, dos troncos e do sapo etc�). Conter� v�rios sub-m�dulos como: carro, cami�o, sapo, tronco, tartaruga, faixa.
+
+Motor de Jogo Two-Player
+Membro: Jo�o Guarda;
+Descri��o: Semelhante ao m�dulo de Single-Player com os devidos ajustes.
+
+Tratador de Interrup��es
+Membro: Ana Amaral;
+Descri��o: Este m�dulo conter� informa��o de quais os perif�ricos est�o ativos assim como ser� respons�vel por chamar o handler adequado para cada interrup��o.
+
+Menu Principal
+Membro: Ana Amaral;
+Descri��o: Este m�dulo conter� informa��o do menu principal. Conter� a posi��o dos bot�es das op��es dispon�veis, assim como a imagem do menu.
+
+Menu High-Score
+Membro: Ana Amaral;
+Descri��o: Este m�dulo conter� informa��o das pontua��es m�ximas anteriormente obtidas, assim como a imagem deste menu.
+
+
+Planeamento 
+
+01 de Dezembro: Implementar os m�dulos do Rato, Timer e Teclado.
+08 de Dezembro: Implementar os m�dulos do Modo Gr�fico e dos Menus.
+15 de Dezembro: Implementar o Motor de Jogo do modo Single-Player.
+22 de Dezembro: Implementar os m�dulos do RTC e da Porta de s�rie.
+02 de Janeiro: Implementar o Motor de Jogo do modo Two-Player�s.
+O m�dulo do tratamento de interrup��es ir� sendo atualizado ao longo do projecto.
