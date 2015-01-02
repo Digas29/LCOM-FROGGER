@@ -22,3 +22,12 @@ char* getPath(char * ficheiro){
 	memcpy(result+len1+len2, ficheiro, len3+1);//+1 to copy the null-terminator
 	return result;
 }
+
+char* getHighPath(char * ficheiro){
+	unsigned int len1 = strlen(base);
+	unsigned int len2 = strlen(ficheiro);
+	char *result = (char*)malloc(len1+len2+1);
+	memcpy(result, base, len1);
+	memcpy(result+len1, ficheiro, len2+1);//+1 to copy the null-terminator
+	return result;
+}

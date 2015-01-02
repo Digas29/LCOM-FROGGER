@@ -8,10 +8,8 @@
 
 MainMenu* newMainMenu(){
 	MainMenu* menu = (MainMenu *) malloc(sizeof(MainMenu));
-	printf("new main \n");
 	menu->done = 0;
 	menu->fundo = loadBitmap(getPath("frogger.bmp"));
-	printf("new main \n");
 	menu->mousePlay = 0;
 	menu->playButton = newRec(0.32*get_h_res(),0.27*get_h_res(),0.68*get_h_res(),0.315*get_h_res());
 	menu->mouseHighScores = 0;
@@ -20,7 +18,6 @@ MainMenu* newMainMenu(){
 	menu->settingsButton = newRec(0.32*get_h_res(),0.445*get_h_res(),0.68*get_h_res(),0.49*get_h_res());
 	menu->mouseExit = 0;
 	menu->exitButton = newRec(0.32*get_h_res(),0.5325*get_h_res(),0.68*get_h_res(),0.5775*get_h_res());
-	printf("new main \n");
 	return menu;
 }
 

@@ -12,11 +12,33 @@
 #include <time.h>
 #include <stdlib.h>
 #include "graphics.h"
+#include "RTC.h"
+
+int alarm;
+int minutes;
+int seconds;
+
+void setAlarm(){
+	alarm = 1;
+}
+void decreaseTime(){
+	if(minutes || seconds){
+		seconds--;
+		if(seconds < 0){
+			minutes--;
+			seconds = 59;
+		}
+	}
+}
 
 
 Game* newGame(){
+	minutes = 5;
+	seconds = 0;
+	alarm = 0;
 	Game * jogo = (Game*) malloc(sizeof(Game));
 
+	setupRTCInteruptions();
 	jogo->fundo = loadBitmap(getPath("test.bmp"));
 	jogo->carros = loadBitmap(getPath("car_sprites.bmp"));
 	jogo->troncos = loadBitmap(getPath("logs.bmp"));
@@ -70,8 +92,8 @@ Game* newGame(){
 	addCar(jogo->lane4,4);
 	addCar(jogo->lane4,4);
 
-	addCar(jogo->lane5,5);
-	addCar(jogo->lane5,5);
+	addTruck(jogo->lane5,5);
+	addTruck(jogo->lane5,5);
 
 	addTurtles(jogo->river1, 1);
 	addTurtles(jogo->river1, 1);
@@ -93,36 +115,50 @@ Game* newGame(){
 	jogo->lives = 3;
 	jogo->pontos = 0;
 
+
 	jogo->pause = 0;
 	jogo->gameover = 0;
 	jogo->done = 0;
+	jogo->alarm = 0;
 
-	programDeltaAlarm(0,1,0);
+	programDeltaAlarm(0,minutes,seconds);
 	return jogo;
 }
 void updateGame(Game* game, unsigned long scanCode){
+
+	if(game->gameover == 3 || game->alarm == 3){
+		game->done = 1;
+		return;
+	}
 
 	switch(scanCode){
 	case KEY_ESC:
 		game->done = 1;
 		break;
 	case KEY_P:
+		stopRTCInteruptions();
 		game->pause = 1;
 		break;
 	case KEY_SPACE:
+		setupRTCInteruptions();
+		programDeltaAlarm(0,minutes,seconds);
 		game->pause = 0;
 		break;
 	default:
 		break;
 	}
-	if(game->pause){
+	if(game->pause || game->alarm){
 		return;
 	}
-	if(game->gameover == 3){
-		game->done = 1;
+	if(alarm){
+		game->alarm = 1;
+		alarm = 0;
 		return;
 	}
 	updateFrog(game->frog, scanCode);
+	if(game->gameover){
+		return;
+	}
 	if(!game->frog->dead){
 		int i;
 		for(i = 0; i < game->lane1->size; i++){
@@ -172,7 +208,7 @@ void updateGame(Game* game, unsigned long scanCode){
 			collision = checkLaneCollisions(game->frog, game->lane4);
 			break;
 		case 5:
-			collision = checkLaneCollisions(game->frog, game->lane5);
+			collision = checkTruckCollisions(game->frog, game->lane5);
 			break;
 		case 7:
 			collision = checkRiverTCollisions(game->frog, game->river1);
@@ -227,6 +263,9 @@ void updateGame(Game* game, unsigned long scanCode){
 			for(i = 0; i < 5; i++){
 				game->sapos[i] = 0;
 			}
+			minutes = 5;
+			seconds = 0;
+			programDeltaAlarm(0,minutes,seconds);
 		}
 	}
 }
@@ -274,6 +313,9 @@ void drawGame(Game* game){
 	drawString("points", 0.05*get_h_res(), 0.1125*get_h_res(), green);
 	drawString("level", 0.85*get_h_res(), 0.0125*get_h_res(), green);
 
+	drawString("minutes", 0.025*get_h_res(), 0.65*get_h_res(), green);
+	drawString("seconds", 0.825*get_h_res(), 0.65*get_h_res(), green);
+
 	int x = 0.05*get_h_res();
 	for(i = 0; i < game->lives;i++){
 		drawBitmapT(game->vidas, x,  0.0625 * get_h_res(), ALIGN_LEFT);
@@ -287,15 +329,27 @@ void drawGame(Game* game){
 
 	sprintf(string, "%d", game->level);
 	drawString(string, 0.85*get_h_res(), 0.0625 * get_h_res(), green);
+
+	sprintf(string, "%d", minutes);
+	drawString(string, 0.025*get_h_res(), 0.70 * get_h_res(), green);
+
+	sprintf(string, "%d", seconds);
+	drawString(string, 0.825*get_h_res(), 0.70 * get_h_res(), green);
+
+
 	if(game->pause){
-		drawString("pause", 0.45*get_h_res(), 0.45*get_v_res(), green);
+		drawString("pause",0.425*get_h_res(), 0.375*get_v_res(), green);
 	}
 
 	if(game->gameover){
-		drawString("game over", 0.45*get_h_res(), 0.45*get_v_res(), green);
+		drawString("game over", 0.425*get_h_res(), 0.375*get_v_res(), green);
+	}
+	if(game->alarm){
+		drawString("time", 0.425*get_h_res(), 0.375*get_v_res(), green);
 	}
 }
 void deleteGame(Game* game){
+	stopRTCInteruptions();
 	deleteBitmap(game->fundo);
 	deleteBitmap(game->carros);
 	deleteBitmap(game->troncos);
@@ -585,6 +639,15 @@ int checkLaneCollisions(Frog * frog, Lane* lane){
 	}
 	return 0;
 }
+int checkTruckCollisions(Frog * frog, Lane* lane){
+	int i;
+	for(i = 0;i < lane->size; i++){
+		if(!(frog->x + 0.035*get_h_res() < lane->cars[i]->x || frog->x > lane->cars[i]->x + 0.065*get_h_res() ||
+				frog->y + 0.035*get_h_res() < lane->cars[i]->y || frog->y > lane->cars[i]->y + 0.035*get_h_res()))
+			return 1;
+	}
+	return 0;
+}
 int checkRiverCollisions(Frog * frog, River* river){
 	if(frog->vy != 0){
 		return 0;
@@ -665,6 +728,32 @@ void addCar(Lane* lane, int faixa){
 	while(1){
 		for(i=0; i < lane->size; i++){
 			if(car->x >= lane->cars[i]->x - 0.05*get_h_res() && car->x <= lane->cars[i]->x + 0.1*get_h_res()){
+				colision = 1 ;
+				break;
+			}
+		}
+		if(!colision){
+			lane->cars[lane->size] = car;
+			lane->size++;
+			break;
+		}
+		deleteCar(car);
+		car = newCar(faixa);
+		colision = 0;
+	}
+}
+void addTruck(Lane* lane, int faixa){
+
+	if(lane->size == laneMaxSize){
+		return;
+	}
+	int i;
+	int colision = 0;
+	Car* car = newCar(faixa);
+
+	while(1){
+		for(i=0; i < lane->size; i++){
+			if(car->x + 0.065 *get_h_res()>= lane->cars[i]->x - 0.05*get_h_res() && car->x <= lane->cars[i]->x + 0.115*get_h_res()){
 				colision = 1 ;
 				break;
 			}

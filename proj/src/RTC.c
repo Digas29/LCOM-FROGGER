@@ -39,18 +39,22 @@ int unsubscribe_RTC() {
 	return sys_irqdisable(&hookID) != OK || sys_irqrmpolicy(&hookID) != OK;
 }
 void RTC_IH(){
+
 	unsigned long regC;
+	int cause = 0;
+
+	disable();
 
 	sys_outb(RTC_ADDR_REG, REG_C);
 	sys_inb(RTC_DATA_REG, &regC);
 
 	if(regC & RTC_UF)
-		drawString("update", 640,300,green);
+		decreaseTime();
 	if(regC & RTC_AF)
-		drawString("alarm", 640,400,green);
+		setAlarm();
 	if(regC & RTC_PF)
-		drawString("period", 640,500,green);
-
+		//do nothing
+	enable();
 }
 
 void setupRTCInteruptions(){
@@ -62,9 +66,29 @@ void setupRTCInteruptions(){
 	sys_inb(RTC_DATA_REG, &regB);
 	if(!(regB & AIE)){
 		regB |= AIE;
-		sys_outb(RTC_ADDR_REG, REG_B);
-		sys_outb(RTC_DATA_REG, regB);
 	}
+	if(!(regB & UIE)){
+		regB |= UIE;
+	}
+	sys_outb(RTC_ADDR_REG, REG_B);
+	sys_outb(RTC_DATA_REG, regB);
+	enable();
+}
+void stopRTCInteruptions(){
+
+	unsigned long regB = 0;
+
+	disable();
+	sys_outb(RTC_ADDR_REG, REG_B);
+	sys_inb(RTC_DATA_REG, &regB);
+	if(regB & AIE){
+		regB ^= AIE;
+	}
+	if(regB & UIE){
+		regB ^= UIE;
+	}
+	sys_outb(RTC_ADDR_REG, REG_B);
+	sys_outb(RTC_DATA_REG, regB);
 	enable();
 }
 
