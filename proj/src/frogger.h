@@ -7,7 +7,8 @@ typedef enum{
 	MAIN_MENU,
 	GAME,
 	SETTINGS,
-	HIGHSCORES_MENU
+	HIGHSCORES_MENU,
+	NEWRECORD
 
 } State;
 

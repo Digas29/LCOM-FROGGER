@@ -156,6 +156,7 @@ frogger.o:	highscores.h
 frogger.o:	keyboard.h
 frogger.o:	log.h
 frogger.o:	mouse.h
+frogger.o:	newRecord.h
 frogger.o:	path.h
 frogger.o:	rectangle.h
 frogger.o:	settings.h
@@ -180,6 +181,7 @@ game.o:	frogger.h
 game.o:	game.c
 game.o:	game.h
 game.o:	graphics.h
+game.o:	highscores.h
 game.o:	keyboard.h
 game.o:	log.h
 game.o:	mouse.h
@@ -438,6 +440,23 @@ mouse.o:	bitmap.h
 mouse.o:	mouse.c
 mouse.o:	mouse.h
 mouse.o:	path.h
+
+newRecord.o:	/usr/include/minix/dir.h
+newRecord.o:	/usr/include/minix/types.h
+newRecord.o:	/usr/include/sys/null.h
+newRecord.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/ansi.h
+newRecord.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stdio.h
+newRecord.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
+newRecord.o:	RTC.h
+newRecord.o:	bitmap.h
+newRecord.o:	colors.h
+newRecord.o:	highscores.h
+newRecord.o:	keyboard.h
+newRecord.o:	newRecord.c
+newRecord.o:	newRecord.h
+newRecord.o:	path.h
+newRecord.o:	rectangle.h
+newRecord.o:	strings.h
 
 path.o:	/usr/include/limits.h
 path.o:	/usr/include/minix/dir.h

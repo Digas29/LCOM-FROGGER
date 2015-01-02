@@ -25,6 +25,7 @@ typedef struct{
 }HighScoresMenu;
 
 void newRecords();
+void addRecord(Record* record);
 Records * getRecords();
 void loadRecords();
 void deleteRecords();

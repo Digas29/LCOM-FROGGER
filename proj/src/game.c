@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include "graphics.h"
 #include "RTC.h"
+#include "highscores.h"
 
 int alarm;
 int minutes;
@@ -115,7 +116,7 @@ Game* newGame(){
 	jogo->lives = 3;
 	jogo->pontos = 0;
 
-
+	jogo->newRecord = 0;
 	jogo->pause = 0;
 	jogo->gameover = 0;
 	jogo->done = 0;
@@ -128,6 +129,15 @@ void updateGame(Game* game, unsigned long scanCode){
 
 	if(game->gameover == 3 || game->alarm == 3){
 		game->done = 1;
+		Records * records = getRecords();
+		if(records->size < 10){
+			game->newRecord = 1;
+		}
+		else{
+			if(records->records[records->size - 1]->points < game->pontos){
+				game->newRecord = 1;
+			}
+		}
 		return;
 	}
 
