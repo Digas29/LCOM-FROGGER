@@ -22,13 +22,14 @@ void addRecord(Record* record){
 		pos--;
 	}
 	records->records[pos] = record;
+	records->size++;
 	Record * temp;
 	int i,j;
 	for (i = 0; i < records->size; ++i)
 	{
 		for (j = i + 1; j < records->size; ++j)
 		{
-			if (records->records[i]->points > records->records[j]->points)
+			if (records->records[i]->points < records->records[j]->points)
 			{
 				temp =  records->records[i];
 				records->records[i] = records->records[j];
@@ -36,7 +37,6 @@ void addRecord(Record* record){
 			}
 		}
 	}
-	records->size++;
 }
 Records * getRecords(){
 	return records;
