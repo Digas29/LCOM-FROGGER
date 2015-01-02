@@ -62,6 +62,7 @@ typedef struct{
 	int gameover;
 	int lives;
 	int done;
+	int newRecord;
 
 	Frog* frog;
 

@@ -16,6 +16,28 @@ void newRecords(){
 	records = (Records*)malloc(sizeof(Records));
 	records->size = 0;
 }
+void addRecord(Record* record){
+	int pos = records->size;
+	if(pos == 10){
+		pos--;
+	}
+	records->records[pos] = record;
+	Record * temp;
+	int i,j;
+	for (i = 0; i < records->size; ++i)
+	{
+		for (j = i + 1; j < records->size; ++j)
+		{
+			if (records->records[i]->points > records->records[j]->points)
+			{
+				temp =  records->records[i];
+				records->records[i] = records->records[j];
+				 records->records[j] = temp;
+			}
+		}
+	}
+	records->size++;
+}
 Records * getRecords(){
 	return records;
 }
@@ -23,7 +45,7 @@ void deleteRecords(){
 	free(records);
 }
 void loadRecords(){
-	char line[1024];
+	int letra;
 	char * name;
 	char * date;
 	int points;
@@ -34,18 +56,12 @@ void loadRecords(){
 
 	if (!file)
 		return;
-	while (fgets(line,1024, file)){
-		name = &line[0];
-		fgets(line,1024, file);
-		date = &line[0];
-
-		fscanf (file, "%d", &points);
-		fgets(line,1024, file);
-		printf("%s", name);
-		printf("%s", date);
-		printf("%d \n", points);
+	while (fgetc(file) != EOF){
+		letra  = fgetc(file);
+		printf("%c \n", letra);
 	}
 	fclose(file);
+
 }
 
 HighScoresMenu* newHighScoresMenu(){
@@ -75,7 +91,17 @@ void updateHighScoresMenu(HighScoresMenu* menu, unsigned long scanCode){
 
 void drawHighScoresMenu(HighScoresMenu* menu){
 	drawBitmap(menu->fundo, 0, 0,ALIGN_LEFT);
-
+	int i;
+	int x = 0.2*get_h_res();
+	int y = 0.2*get_h_res();
+	for(i=0; i < records->size; i++){
+		drawString(records->records[i]->data, x,y, RGB888toRGB565(255,255,255));
+		drawString(records->records[i]->nome, x + 0.20 *get_h_res(),y, RGB888toRGB565(255,255,255));
+		char point[15];
+		sprintf(point, "%d", records->records[i]->points);
+		drawString(point, x + 2*0.2 *get_h_res(),y, RGB888toRGB565(255,255,255));
+		y += 0.05*get_h_res();
+	}
 	if(mouseInsideRec(menu->exitButton)){
 		drawString("back", 0.45*get_h_res(), 0.5325*get_h_res(), RGB888toRGB565(255,255,0));
 	}

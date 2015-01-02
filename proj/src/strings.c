@@ -220,9 +220,11 @@ void drawChar(char caracter, int x, int y, unsigned long color){
 void drawString(char string[], int x, int y, unsigned long color){
 	int i = 0;
 	while(string[i] != '\0'){
-		drawChar(string[i], x+3, y+3, RGB888toRGB565(0,0,255));
-		drawChar(string[i],x,y,color);
-		i++;
-		x = nextX;
+		if(string[i] != '\n' ){
+			drawChar(string[i], x+3, y+3, RGB888toRGB565(0,0,255));
+			drawChar(string[i],x,y,color);
+			i++;
+			x = nextX;
+		}
 	}
 }

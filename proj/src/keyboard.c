@@ -36,12 +36,13 @@ int kbc_read(){
 
 		if(stat & OBF) {
 
-			if ( (stat &(PAR_ERR | TO_ERR)) == 0 && sys_inb(OUT_BUF, &data) == OK)
+			if ( (stat &(PAR_ERR | TO_ERR)) == 0 && sys_inb(OUT_BUF, &data) == OK){
 				return data;
-			else
+			}
+			else{
 				return -1;
+			}
 		}
-		tickdelay(micros_to_ticks(DELAY_US));
 		tries++;
 	}
 }

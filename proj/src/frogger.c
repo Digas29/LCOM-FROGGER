@@ -12,6 +12,7 @@
 #include "settings.h"
 #include "RTC.h"
 #include "highscores.h"
+#include "newRecord.h"
 
 const int FRAMES_PER_SECOND = 30;
 const int mouse_multiplier = 2;
@@ -45,7 +46,7 @@ Frogger* newFrogger(){
 	newTimer();
 	newAlphabet();
 	newRecords();
-	loadRecords();
+	//loadRecords();
 
 	frogger->complete = 0;
 	frogger->scanCode = 0;
@@ -121,6 +122,9 @@ void updateFrogger(Frogger* frogger){
 		case HIGHSCORES_MENU:
 			updateHighScoresMenu(frogger->state, frogger->scanCode);
 			break;
+		case NEWRECORD:
+			updateNewRecordMenu(frogger->state, frogger->scanCode);
+			break;
 		default:
 			break;
 		}
@@ -143,6 +147,9 @@ void drawFrogger(Frogger* frogger){
 		}
 		if(frogger->estado == HIGHSCORES_MENU){
 			drawHighScoresMenu((HighScoresMenu*)frogger->state);
+		}
+		if(frogger->estado == NEWRECORD){
+			drawNewRecordMenu((newRecordMenu*)frogger->state);
 		}
 		frogger->up = 0;
 	}
@@ -178,12 +185,20 @@ void deleteState(Frogger* frogger){
 	case HIGHSCORES_MENU:
 		deleteHighScoresMenu((HighScoresMenu*)frogger->state);
 		break;
+	case NEWRECORD:
+		deleteNewRecordMenu((newRecordMenu*)frogger->state);
+		break;
 	default:
 		break;
 	}
 }
 
 void changeState(Frogger* frogger, State newSate){
+	int points = 0;
+	if(frogger->estado == GAME && newSate == NEWRECORD){
+		points = ((Game*)frogger->state)->pontos;
+	}
+
 	deleteState(frogger);
 
 	frogger->estado = newSate;
@@ -199,6 +214,9 @@ void changeState(Frogger* frogger, State newSate){
 		break;
 	case HIGHSCORES_MENU:
 		frogger->state = newHighScoresMenu();
+		break;
+	case NEWRECORD:
+		frogger->state = newNewRecordMenu(points);
 		break;
 	default:
 		break;
@@ -229,7 +247,12 @@ void updateState(Frogger* frogger){
 		break;
 	case GAME:
 		if(((Game*)frogger->state)->done){
-			changeState(frogger,MAIN_MENU);
+			if(((Game*)frogger->state)->newRecord){
+				changeState(frogger,NEWRECORD);
+			}
+			else{
+				changeState(frogger,MAIN_MENU);
+			}
 		}
 		break;
 	case SETTINGS:
@@ -265,6 +288,11 @@ void updateState(Frogger* frogger){
 	case HIGHSCORES_MENU:
 		if(((HighScoresMenu*)frogger->state)->mouseExit){
 			getMouse()->leftButtonDown = 0;
+			changeState(frogger,MAIN_MENU);
+		}
+		break;
+	case NEWRECORD:
+		if(((newRecordMenu*)frogger->state)->done){
 			changeState(frogger,MAIN_MENU);
 		}
 		break;
