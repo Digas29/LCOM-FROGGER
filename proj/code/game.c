@@ -125,6 +125,40 @@ Game* newGame(){
 	programDeltaAlarm(0,minutes,seconds);
 	return jogo;
 }
+
+void levelupdate(Game* game){
+	int i;
+	for(i = 0; i < game->lane1->size; i++){
+		game->lane1->cars[i]->vx *= 1.5;
+	}
+	for(i = 0; i < game->lane2->size; i++){
+		game->lane2->cars[i]->vx *= 1.5;
+	}
+	for(i = 0; i < game->lane3->size; i++){
+		game->lane3->cars[i]->vx *= 1.5;
+	}
+	for(i = 0; i < game->lane4->size; i++){
+		game->lane4->cars[i]->vx *= 1.5;
+	}
+	for(i = 0; i < game->lane5->size; i++){
+		game->lane5->cars[i]->vx *= 1.5;
+	}
+	for(i = 0; i < game->river1->size; i++){
+		game->river1->t[i]->vx *= 1.5;
+	}
+	for(i = 0; i < game->river2->size; i++){
+		game->river2->logs[i]->vx *= 1.5;
+	}
+	for(i = 0; i < game->river3->size; i++){
+		game->river3->logs[i]->vx *= 1.5;
+	}
+	for(i = 0; i < game->river4->size; i++){
+		game->river4->t[i]->vx *= 1.5;
+	}
+	for(i = 0; i < game->river5->size; i++){
+		game->river5->logs[i]->vx *= 1.5;
+	}
+}
 void updateGame(Game* game, unsigned long scanCode){
 
 	if(game->gameover == 3 || game->alarm == 3){
@@ -273,6 +307,7 @@ void updateGame(Game* game, unsigned long scanCode){
 			for(i = 0; i < 5; i++){
 				game->sapos[i] = 0;
 			}
+			levelupdate(game);
 			minutes = 5;
 			seconds = 0;
 			programDeltaAlarm(0,minutes,seconds);

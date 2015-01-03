@@ -89,6 +89,8 @@ void updateFrog(Frog* sapo,unsigned long scanCode);
 void drawFrog(Frog* sapo);
 void deleteFrog(Frog* sapo);
 
+void levelupdate(Game* game);
+
 int checkLaneCollisions(Frog * frog, Lane* lane);
 int checkTruckCollisions(Frog * frog, Lane* lane);
 int checkRiverCollisions(Frog * frog, River* river);
